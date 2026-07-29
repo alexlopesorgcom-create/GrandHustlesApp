@@ -3,593 +3,524 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GRAND HUSTLES - Streetwear Drops</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <title>GRAND HUSTLES</title>
+
+  <!-- Librería Three.js para el Fondo 3D -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #000000;
-      color: #ffffff;
-      overflow-x: hidden;
-      min-height: 100vh;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
+    body {
+      background-color: #050505;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* CANVAS 3D FONDO */
     #canvas3d {
       position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: 1;
       pointer-events: none;
     }
 
-    .main-wrapper {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px 60px;
-    }
-
-    /* BARRA NAVEGACIÓN */
-    nav {
+    /* HEADER / NAV */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 25px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 900;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-    }
-
-    .nav-icons {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-    }
-
-    .cart-btn-icon {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.4rem;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .cart-count {
-      position: absolute;
-      top: -6px; right: -10px;
-      background: #ff3333;
-      color: white;
-      font-size: 0.7rem;
-      font-weight: bold;
-      border-radius: 50%;
-      padding: 2px 6px;
-    }
-
-    /* SECCIÓN PRODUCTOS */
-    .section-title {
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: 2px;
-      margin: 35px 0 20px;
-      text-transform: uppercase;
-    }
-
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 30px;
-    }
-
-    .product-card {
-      background: rgba(15, 15, 15, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      z-index: 100;
+      background: rgba(5, 5, 5, 0.6);
       backdrop-filter: blur(10px);
     }
 
-    .img-box {
-      width: 100%;
-      height: 280px;
-      background: #111;
-      border-radius: 6px;
-      overflow: hidden;
-      margin-bottom: 15px;
+    .brand-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 2px;
     }
 
-    .img-box img {
+    .cart-btn {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 8px 18px;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    .container {
+      position: relative;
+      z-index: 10;
+      padding-top: 120px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    /* GRID DE PRODUCTOS */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .product-card {
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-img {
       width: 100%;
-      height: 100%;
+      height: 300px;
       object-fit: cover;
-    }
-
-    .prod-title {
-      font-size: 1.1rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-
-    .prod-price {
-      color: #ccc;
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: 8px;
       margin-bottom: 15px;
     }
 
-    .size-select {
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .product-price {
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    .size-selector {
       width: 100%;
       padding: 10px;
       background: #111;
-      border: 1px solid #333;
       color: white;
-      font-family: inherit;
-      font-weight: 600;
-      border-radius: 4px;
+      border: 1px solid #333;
+      border-radius: 6px;
       margin-bottom: 10px;
-      cursor: pointer;
     }
 
-    .add-cart-btn {
+    .add-btn {
       width: 100%;
       padding: 12px;
-      background: #ffffff;
-      color: #000000;
-      font-weight: 900;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
       border: none;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s;
     }
 
-    .add-cart-btn:hover { background: #dddddd; }
-
-    /* POP-UP DE ENTRADA (Early Access) */
-    .popup-overlay {
+    /* MODAL ACCESS CODE */
+    .access-modal {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
+      background: rgba(0,0,0,0.95);
+      z-index: 2000;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 20px;
     }
 
-    .popup-content {
-      background: #000;
-      border: 1px solid #333;
-      width: 100%;
-      max-width: 440px;
-      padding: 40px 25px;
+    .access-box {
       text-align: center;
-      border-radius: 8px;
-      position: relative;
+      background: #111;
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      max-width: 400px;
+      width: 90%;
     }
 
-    .popup-close {
-      position: absolute;
-      top: 15px; right: 20px;
-      background: none; border: none;
-      color: #888; font-size: 1.5rem;
-      cursor: pointer;
-    }
-
-    .popup-h2 {
-      font-size: 1.6rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 15px;
-    }
-
-    .popup-p {
-      font-size: 0.85rem;
-      color: #aaa;
-      margin-bottom: 25px;
-      line-height: 1.4;
-    }
-
-    .popup-input {
+    .access-box input {
       width: 100%;
       padding: 12px;
-      background: #111;
-      border: 1px solid #333;
+      margin: 15px 0;
+      background: #222;
+      border: 1px solid #444;
       color: white;
-      border-radius: 4px;
-      margin-bottom: 12px;
+      border-radius: 6px;
+      text-align: center;
     }
 
-    .popup-btn {
-      width: 100%;
-      padding: 14px;
-      background: #ff3333;
-      color: white;
-      font-weight: 900;
-      border: none;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      cursor: pointer;
-    }
-
-    /* CARRITO LATERAL (Slide-out Cart) */
+    /* CARRITO LATERAL */
     .cart-drawer {
       position: fixed;
-      top: 0; right: -420px;
-      width: 100%; max-width: 400px;
-      height: 100vh;
-      background: #0a0a0a;
-      border-left: 1px solid #222;
-      z-index: 900;
-      padding: 25px;
+      top: 0; right: -400px;
+      width: 380px; height: 100vh;
+      background: #111;
+      z-index: 1200;
+      transition: right 0.3s ease;
+      padding: 30px;
       display: flex;
       flex-direction: column;
-      transition: right 0.3s ease;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.5);
     }
 
-    .cart-drawer.open { right: 0; }
-
-    .cart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #222;
-      padding-bottom: 15px;
-      margin-bottom: 20px;
+    .cart-drawer.open {
+      right: 0;
     }
 
-    .cart-items {
-      flex: 1;
-      overflow-y: auto;
-    }
-
-    .cart-item {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-      border-bottom: 1px solid #1a1a1a;
-      padding-bottom: 15px;
-    }
-
-    .cart-item-img {
-      width: 70px; height: 70px;
-      background: #222; object-fit: cover;
-      border-radius: 4px;
-    }
-
-    .cart-item-info h4 { font-size: 0.95rem; }
-    .cart-item-info p { font-size: 0.85rem; color: #888; margin-top: 4px; }
-
-    .cart-footer {
-      border-top: 1px solid #222;
-      padding-top: 15px;
-    }
-
-    .cart-subtotal {
-      display: flex;
-      justify-content: space-between;
-      font-weight: bold;
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-    }
-
-    .checkout-btn {
-      width: 100%;
-      padding: 14px;
-      background: #fff;
-      color: #000;
-      font-weight: 900;
-      border: none;
-      border-radius: 4px;
-      text-transform: uppercase;
-      cursor: pointer;
-    }
-
-    /* CHECKOUT MODAL */
+    /* CHECKOUT MODAL ESTILO 8THWNDR */
     .checkout-modal {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.9);
-      z-index: 1100;
+      z-index: 1500;
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
-      overflow-y: auto;
     }
 
     .checkout-box {
       background: #111;
       border: 1px solid #333;
-      width: 100%; max-width: 500px;
-      padding: 30px;
-      border-radius: 8px;
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
     .form-group input, .form-group select {
-      width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 4px;
+      width: 100%;
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: white;
+      border-radius: 6px;
+      font-size: 0.9rem;
     }
 
-    /* BOTÓN TUERCA ADMIN */
-    .admin-trigger {
-      position: fixed; bottom: 20px; left: 20px; z-index: 800;
-      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-      color: white; width: 45px; height: 45px; border-radius: 50%;
-      cursor: pointer; font-size: 1.2rem;
+    .checkout-btn {
+      width: 100%;
+      padding: 15px;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 15px;
     }
-
-    .admin-panel {
-      position: fixed; top: 0; left: -360px;
-      width: 320px; height: 100vh; background: #080808;
-      border-right: 1px solid #222; z-index: 850; padding: 25px;
-      transition: left 0.3s ease; overflow-y: auto;
-    }
-    .admin-panel.open { left: 0; }
   </style>
 </head>
 <body>
 
+  <!-- CANVAS 3D -->
   <canvas id="canvas3d"></canvas>
 
-  <div class="main-wrapper">
-    <nav>
-      <div class="logo">GRAND HUSTLES</div>
-      <div class="nav-icons">
-        <button class="cart-btn-icon" onclick="toggleCart()">
-          🛒 <span class="cart-count" id="cartCount">0</span>
-        </button>
-      </div>
-    </nav>
-
-    <div class="section-title">ALL PRODUCTS</div>
-    <div class="grid-container" id="productsGrid"></div>
-  </div>
-
-  <!-- POP-UP ACCESO ANTICIPADO -->
-  <div class="popup-overlay" id="earlyAccessPopup">
-    <div class="popup-content">
-      <button class="popup-close" onclick="closePopup()">✕</button>
-      <div class="popup-h2">GET EARLY ACCESS TO NEW DROPS</div>
-      <div class="popup-p">JOIN THE GRAND HUSTLES LIST FOR EXCLUSIVE DROPS & OFFERS.</div>
-      <input type="text" class="popup-input" placeholder="Phone or Email">
-      <button class="popup-btn" onclick="closePopup()">SUBSCRIBE NOW</button>
+  <!-- POPUP ACCESO VIP -->
+  <div class="access-modal" id="accessModal">
+    <div class="access-box">
+      <h2>GRAND HUSTLES</h2>
+      <p style="color:#aaa; font-size:0.85rem; margin-top:5px;">Enter VIP Access Code</p>
+      <input type="text" id="accessInput" placeholder="ENTER CODE">
+      <button class="add-btn" onclick="checkAccess()">ENTER DROP</button>
     </div>
   </div>
 
-  <!-- CARRITO LATERAL DESLIZABLE -->
+  <!-- HEADER -->
+  <header>
+    <div class="brand-title">GRAND HUSTLES</div>
+    <button class="cart-btn" onclick="toggleCart()">CART (<span id="cartCount">0</span>)</button>
+  </header>
+
+  <!-- CATALOGO -->
+  <div class="container">
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="https://via.placeholder.com/400x400" class="product-img" alt="Short">
+        <div class="product-title">HUSTLE BLACK SHORTS</div>
+        <div class="product-price">$84.00 USD</div>
+        <select class="size-selector">
+          <option>S</option>
+          <option>M</option>
+          <option>L</option>
+          <option>XL</option>
+        </select>
+        <button class="add-btn" onclick="addToCart('HUSTLE BLACK SHORTS', 84)">ADD TO CART</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARRITO DESLIZABLE -->
   <div class="cart-drawer" id="cartDrawer">
-    <div class="cart-header">
-      <h3 style="font-weight: 900;">SHOPPING CART</h3>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h3>YOUR CART</h3>
       <button onclick="toggleCart()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
     </div>
-    <div class="cart-items" id="cartItemsContainer"></div>
-    <div class="cart-footer">
-      <div class="cart-subtotal">
-        <span>SUBTOTAL</span>
-        <span id="cartSubtotal">$0.00 USD</span>
+    <div id="cartItems" style="flex:1; overflow-y:auto;">
+      <p style="color:#666;">Your cart is empty.</p>
+    </div>
+    <div style="border-top:1px solid #222; padding-top:15px; margin-top:15px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+        <span>Total:</span>
+        <span id="cartTotal" style="font-weight:bold;">$0.00 USD</span>
       </div>
       <button class="checkout-btn" onclick="openCheckout()">CHECKOUT</button>
     </div>
   </div>
 
-  <!-- MODAL DE CHECKOUT (ENVÍO Y PAGO) -->
+  <!-- MODAL DE CHECKOUT ESTILO SHOPIFY / 8THWNDR -->
   <div class="checkout-modal" id="checkoutModal">
     <div class="checkout-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h3 style="font-weight:900;">ORDER CHECKOUT</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:10px;">
+        <h3 style="font-weight:900; letter-spacing:1px;">CHECKOUT</h3>
         <button onclick="closeCheckout()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
       </div>
 
+      <!-- SECCIÓN CONTACTO Y ENVÍO -->
+      <h4 style="font-size:0.9rem; color:#888; text-transform:uppercase; margin-bottom:10px;">Delivery</h4>
+      
       <div class="form-group">
-        <label>Contact Email</label>
-        <input type="email" placeholder="email@ejemplo.com">
+        <label>Country / Region</label>
+        <select><option>United States</option></select>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:1;">
+          <label>First name</label>
+          <input type="text" placeholder="Nombre">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Last name</label>
+          <input type="text" placeholder="Apellido">
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Shipping Address</label>
-        <input type="text" placeholder="Street Address">
+        <label>Address</label>
+        <input type="text" placeholder="Dirección de envío">
       </div>
 
       <div style="display:flex; gap:10px;">
         <div class="form-group" style="flex:1;">
           <label>City</label>
-          <input type="text" placeholder="City">
+          <input type="text" placeholder="Ciudad">
         </div>
         <div class="form-group" style="flex:1;">
-          <label>Zip Code</label>
-          <input type="text" placeholder="ZIP Code">
+          <label>State</label>
+          <select><option>California</option></select>
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>ZIP code</label>
+          <input type="text" placeholder="Código Postal">
         </div>
       </div>
 
       <div class="form-group">
-        <label>Payment Method</label>
-        <select>
-          <option>Credit Card (Visa/Mastercard)</option>
-          <option>Apple Pay / Google Pay</option>
-          <option>Cash on Delivery / Zelle</option>
-        </select>
+        <label>Phone</label>
+        <input type="text" placeholder="Teléfono para updates del envío">
       </div>
 
-      <div class="form-group">
-        <label>Card Details</label>
-        <input type="text" placeholder="Card Number">
+      <!-- SECCIÓN PAGO -->
+      <h4 style="font-size:0.9rem; color:#888; text-transform:uppercase; margin-top:20px; margin-bottom:10px;">Payment</h4>
+      <p style="font-size:0.75rem; color:#666; margin-bottom:12px;">All transactions are secure and encrypted.</p>
+
+      <!-- Opciones de Pago -->
+      <div style="border:1px solid #333; border-radius:6px; overflow:hidden; margin-bottom:15px;">
+        
+        <!-- Opción 1: Tarjeta -->
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#1a1a1a; cursor:pointer; border-bottom:1px solid #222;">
+          <div>
+            <input type="radio" name="payment_method" value="card" checked onclick="togglePaymentFields('card')">
+            <span style="font-weight:bold; margin-left:8px; font-size:0.9rem;">Credit card</span>
+          </div>
+          <span style="font-size:0.75rem; color:#aaa;">VISA / MC / AMEX</span>
+        </label>
+
+        <div id="cardFields" style="padding:15px; background:#111;">
+          <div class="form-group"><input type="text" placeholder="Card number"></div>
+          <div style="display:flex; gap:10px;">
+            <div class="form-group" style="flex:1;"><input type="text" placeholder="Expiration date (MM / YY)"></div>
+            <div class="form-group" style="flex:1;"><input type="text" placeholder="Security code (CVV)"></div>
+          </div>
+          <div class="form-group"><input type="text" placeholder="Name on card"></div>
+        </div>
+
+        <!-- Opción 2: Apple Pay -->
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#1a1a1a; cursor:pointer; border-bottom:1px solid #222;">
+          <div>
+            <input type="radio" name="payment_method" value="applepay" onclick="togglePaymentFields('applepay')">
+            <span style="font-weight:bold; margin-left:8px; font-size:0.9rem;">Apple Pay</span>
+          </div>
+          <span style="background:#fff; color:#000; font-weight:bold; padding:2px 8px; border-radius:3px; font-size:0.75rem;">Pay</span>
+        </label>
+
+        <!-- Opción 3: Zelle -->
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#1a1a1a; cursor:pointer;">
+          <div>
+            <input type="radio" name="payment_method" value="zelle" onclick="togglePaymentFields('zelle')">
+            <span style="font-weight:bold; margin-left:8px; font-size:0.9rem;">Zelle Transfer</span>
+          </div>
+          <span style="color:#7414ca; font-weight:bold; font-size:0.85rem;">zelle</span>
+        </label>
+
+        <div id="zelleFields" style="padding:15px; background:#111; display:none; font-size:0.85rem; color:#ccc;">
+          Envía el total de tu orden a nuestro Zelle: <strong>TU_CORREO_O_TELEFONO</strong>. Coloca tu nombre en la nota.
+        </div>
+
       </div>
 
-      <button class="checkout-btn" style="background:#00ff88; margin-top:10px;" onclick="alert('¡Gracias por tu compra! Tu orden ha sido procesada.'); closeCheckout();">COMPLETE ORDER</button>
+      <!-- CÓDIGO DE DESCUENTO Y RESUMEN -->
+      <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <input type="text" placeholder="Discount code" style="flex:1; padding:10px; background:#222; border:1px solid #444; color:white; border-radius:4px;">
+        <button style="padding:10px 15px; background:#333; color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Apply</button>
+      </div>
+
+      <button class="checkout-btn" onclick="alert('¡Orden procesada con éxito!'); closeCheckout();">PAY NOW</button>
     </div>
   </div>
 
-  <!-- TUERCA ADMIN -->
-  <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
-
-  <div class="admin-panel" id="adminPanel">
-    <h3 style="margin-bottom:15px; font-weight:900;">PANEL ADMIN</h3>
-    <div class="form-group">
-      <label>Contraseña</label>
-      <input type="password" id="adminPass" placeholder="Clave admin">
-    </div>
-    <div class="form-group">
-      <label>Nombre Drop</label>
-      <input type="text" id="prodName" placeholder="Ej. Baggy Denim">
-    </div>
-    <div class="form-group">
-      <label>Precio (USD)</label>
-      <input type="text" id="prodPrice" placeholder="Ej. $84.00">
-    </div>
-    <div class="form-group">
-      <label>URL Imagen</label>
-      <input type="text" id="prodImg" placeholder="https://...">
-    </div>
-    <button class="add-cart-btn" onclick="addNewProduct()">PUBLICAR DROP</button>
-  </div>
-
+  <!-- SCRIPTS Y LÓGICA -->
   <script>
-    // FONDO 3D
+    // --- 1. ESCENA THREE.JS (FONDO 3D) ---
+    const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), alpha: true });
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+    
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
 
-    const count = 1000;
-    const pos = new Float32Array(count * 3);
-    for(let i=0; i<count*3; i++) pos[i] = (Math.random() - 0.5) * 15;
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    const mat = new THREE.PointsMaterial({ size: 0.03, color: 0xffffff });
-    const points = new THREE.Points(geo, mat);
-    scene.add(points);
+    // Partículas
+    const particlesGeometry = new THREE.BufferGeometry();
+    const count = 700;
+    const positions = new Float32Array(count * 3);
+
+    for(let i=0; i < count * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 15;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particlesMaterial = new THREE.PointsMaterial({ size: 0.03, color: 0xffffff, transparent: true, opacity: 0.6 });
+    const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particleMesh);
+
     camera.position.z = 5;
 
     function animate() {
       requestAnimationFrame(animate);
-      points.rotation.y += 0.001;
+      particleMesh.rotation.y += 0.001;
+      particleMesh.rotation.x += 0.0005;
       renderer.render(scene, camera);
     }
     animate();
 
-    // POP-UP Y PANEL
-    function closePopup() { document.getElementById('earlyAccessPopup').style.display = 'none'; }
-    function toggleCart() { document.getElementById('cartDrawer').classList.toggle('open'); }
-    function toggleAdminPanel() { document.getElementById('adminPanel').classList.toggle('open'); }
-    function openCheckout() { document.getElementById('checkoutModal').style.display = 'flex'; }
-    function closeCheckout() { document.getElementById('checkoutModal').style.display = 'none'; }
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
 
-    // CARRITO DE COMPRAS
+    // --- 2. LÓGICA DE TIENDA Y CHECKOUT ---
     let cart = [];
 
-    function addToCart(name, price, img, sizeId) {
-      const size = document.getElementById(sizeId).value;
-      cart.push({ name, price, img, size });
+    function checkAccess() {
+      const code = document.getElementById('accessInput').value;
+      if (code.toLowerCase() === 'hustle' || code === '1234' || code === '') {
+        document.getElementById('accessModal').style.display = 'none';
+      } else {
+        alert('Código incorrecto');
+      }
+    }
+
+    function toggleCart() {
+      document.getElementById('cartDrawer').classList.toggle('open');
+    }
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
       updateCartUI();
       toggleCart();
     }
 
     function updateCartUI() {
       document.getElementById('cartCount').innerText = cart.length;
-      const container = document.getElementById('cartItemsContainer');
-      container.innerHTML = '';
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<p style="color:#666;">Your cart is empty.</p>';
+        cartTotal.innerText = '$0.00 USD';
+        return;
+      }
+
+      let html = '';
       let total = 0;
-
-      cart.forEach((item, idx) => {
-        const numPrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
-        total += numPrice;
-
-        container.innerHTML += `
-          <div class="cart-item">
-            <img src="${item.img}" class="cart-item-img">
-            <div class="cart-item-info">
-              <h4>${item.name}</h4>
-              <p>Talla: ${item.size}</p>
-              <p style="color:#fff; font-weight:bold; margin-top:2px;">${item.price}</p>
-            </div>
-          </div>
-        `;
+      cart.forEach((item, index) => {
+        total += item.price;
+        html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #222; padding-bottom:5px;">
+          <span>${item.name}</span>
+          <span>$${item.price}.00</span>
+        </div>`;
       });
 
-      document.getElementById('cartSubtotal').innerText = `$${total.toFixed(2)} USD`;
+      cartItems.innerHTML = html;
+      cartTotal.innerText = `$${total}.00 USD`;
     }
 
-    // CARGAR PRODUCTOS DESDE EL BACKEND
-    async function loadProducts() {
-      try {
-        const res = await fetch('/api/products');
-        const data = await res.json();
-        const grid = document.getElementById('productsGrid');
-        grid.innerHTML = '';
-
-        if(data.products) {
-          data.products.forEach((prod, i) => {
-            const parts = prod.split(' | ');
-            const name = parts[0] || 'Drop Item';
-            const price = parts[1] || '$0.00';
-            const img = parts[2] || 'https://via.placeholder.com/300x300/111/fff?text=GRAND+HUSTLES';
-
-            grid.innerHTML += `
-              <div class="product-card">
-                <div>
-                  <div class="img-box"><img src="${img}"></div>
-                  <div class="prod-title">${name}</div>
-                  <div class="prod-price">${price} USD</div>
-                  <select class="size-select" id="size-${i}">
-                    <option value="S / 28">SELECT SIZE: 28 / S</option>
-                    <option value="M / 30">SELECT SIZE: 30 / M</option>
-                    <option value="L / 32">SELECT SIZE: 32 / L</option>
-                    <option value="XL / 34">SELECT SIZE: 34 / XL</option>
-                    <option value="XXL / 36">SELECT SIZE: 36 / XXL</option>
-                  </select>
-                </div>
-                <button class="add-cart-btn" onclick="addToCart('${name}', '${price}', '${img}', 'size-${i}')">ADD TO CART</button>
-              </div>
-            `;
-          });
-        }
-      } catch(e) { console.error(e); }
+    function openCheckout() {
+      if (cart.length === 0) {
+        alert('Tu carrito está vacío');
+        return;
+      }
+      toggleCart();
+      document.getElementById('checkoutModal').style.display = 'flex';
     }
 
-    async function addNewProduct() {
-      const pass = document.getElementById('adminPass').value;
-      const name = document.getElementById('prodName').value;
-      const price = document.getElementById('prodPrice').value;
-      const img = document.getElementById('prodImg').value;
-
-      if(!pass || !name) return alert('Ingresa la contraseña y nombre del producto.');
-      const fullProduct = `${name} | ${price || '$0.00'} | ${img}`;
-
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': pass },
-        body: JSON.stringify({ product: fullProduct })
-      });
-      const data = await res.json();
-      if(data.ok) {
-        alert('Drop publicado');
-        loadProducts();
-      } else { alert('Error: ' + data.error); }
+    function closeCheckout() {
+      document.getElementById('checkoutModal').style.display = 'none';
     }
 
-    loadProducts();
+    function togglePaymentFields(method) {
+      document.getElementById('cardFields').style.display = (method === 'card') ? 'block' : 'none';
+      document.getElementById('zelleFields').style.display = (method === 'zelle') ? 'block' : 'none';
+    }
   </script>
 </body>
 </html>
