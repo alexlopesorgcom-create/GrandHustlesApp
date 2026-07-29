@@ -24,10 +24,15 @@ app.get('/events', (req, res) => {
 // Agregar producto sin escribir en el sistema de archivos
 app.post('/api/products', (req, res) => {
   const apiKey = req.headers['x-api-key'];
-  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'secreto123') {
+  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'TU_NUEVA_CLAVE') {
     return res.status(401).json({ ok: false, error: 'Clave de API incorrecta' });
   }
-
+ // Eliminar producto
+app.delete('/api/products/:index', (req, res) => {
+  const apiKey = req.headers['x-api-key'];
+  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'LEGACY2026') {
+    return res.status(401).json({ ok: false, error: 'Clave de API incorrecta' });
+  }
   const { product } = req.body;
   if (!product) {
     return res.status(400).json({ ok: false, error: 'Producto vacío' });
