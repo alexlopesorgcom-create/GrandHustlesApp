@@ -1,4 +1,9 @@
- // Lista en memoria (inicia con tus datos por defecto)
+ const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+// Lista de productos en memoria
 let products = [
   "Hellstar Tee - $120",
   "BAPE Sta Tee - $110",
@@ -11,10 +16,18 @@ app.get('/api/products', (req, res) => {
   res.json({ products });
 });
 
+// Eventos en vivo (SSE)
+app.get('/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.write('retry: 10000\n\n');
+});
+
 // Agregar producto
 app.post('/api/products', (req, res) => {
   const apiKey = req.headers['x-api-key'];
-  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'TU_CLAVE_AQUI') {
+  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'secreto123') {
     return res.status(401).json({ ok: false, error: 'Clave de API incorrecta' });
   }
 
@@ -30,7 +43,7 @@ app.post('/api/products', (req, res) => {
 // Eliminar producto
 app.delete('/api/products/:index', (req, res) => {
   const apiKey = req.headers['x-api-key'];
-  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'TU_CLAVE_AQUI') {
+  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'secreto123') {
     return res.status(401).json({ ok: false, error: 'Clave de API incorrecta' });
   }
 
@@ -41,3 +54,10 @@ app.delete('/api/products/:index', (req, res) => {
   }
   res.status(400).json({ ok: false, error: 'Índice no válido' });
 });
+
+module.exports = app;
+
+const PORT = process.env.PORT || 3000;
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`Servidor activo en el puerto ${PORT}`));
+}
