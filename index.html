@@ -4,427 +4,568 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GRAND HUSTLES - Streetwear Drops</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-  <!-- Three.js para el fondo 3D -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Montserrat', sans-serif;
-      background-color: #050505;
+      background-color: #000000;
       color: #ffffff;
       overflow-x: hidden;
       min-height: 100vh;
     }
 
-    /* Canvas 3D de fondo */
     #canvas3d {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       z-index: 1;
       pointer-events: none;
     }
 
-    .main-container {
+    .main-wrapper {
       position: relative;
       z-index: 2;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 0 20px 60px;
     }
 
-    header {
-      text-align: center;
-      padding: 40px 0 20px;
+    /* BARRA NAVEGACIÓN */
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 25px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(8px);
     }
 
-    h1 {
-      font-size: 3rem;
+    .logo {
+      font-size: 1.8rem;
       font-weight: 900;
-      letter-spacing: 4px;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      background: linear-gradient(45deg, #ffffff, #888888);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
     }
 
-    p.subtitle {
-      font-size: 1rem;
-      color: #888;
+    .nav-icons {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .cart-btn-icon {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -6px; right: -10px;
+      background: #ff3333;
+      color: white;
+      font-size: 0.7rem;
+      font-weight: bold;
+      border-radius: 50%;
+      padding: 2px 6px;
+    }
+
+    /* SECCIÓN PRODUCTOS */
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 800;
       letter-spacing: 2px;
-      margin-top: 5px;
+      margin: 35px 0 20px;
+      text-transform: uppercase;
     }
 
     .grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
-      margin-top: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
     }
 
-    .card {
-      background: rgba(20, 20, 20, 0.65);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 12px;
-      padding: 20px;
-      backdrop-filter: blur(10px);
-      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    .product-card {
+      background: rgba(15, 15, 15, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 15px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      backdrop-filter: blur(10px);
     }
 
-    .card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(255, 255, 255, 0.4);
-      box-shadow: 0 12px 40px 0 rgba(255, 255, 255, 0.15);
-    }
-
-    .card-img-container {
+    .img-box {
       width: 100%;
-      height: 220px;
-      border-radius: 8px;
+      height: 280px;
+      background: #111;
+      border-radius: 6px;
       overflow: hidden;
       margin-bottom: 15px;
-      background: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    .card-img {
+    .img-box img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .card h3 {
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #fff;
+    .prod-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 6px;
     }
 
-    .card p.price {
-      color: #00ff88;
-      font-size: 1.1rem;
-      font-weight: bold;
+    .prod-price {
+      color: #ccc;
+      font-size: 1rem;
+      font-weight: 600;
       margin-bottom: 15px;
     }
 
-    .buy-btn {
+    .size-select {
+      width: 100%;
+      padding: 10px;
+      background: #111;
+      border: 1px solid #333;
+      color: white;
+      font-family: inherit;
+      font-weight: 600;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .add-cart-btn {
       width: 100%;
       padding: 12px;
-      border: none;
-      border-radius: 6px;
       background: #ffffff;
       color: #000000;
       font-weight: 900;
+      border: none;
+      border-radius: 4px;
       text-transform: uppercase;
+      letter-spacing: 1px;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: background 0.2s;
     }
 
-    .buy-btn:hover {
-      background: #dddddd;
-    }
+    .add-cart-btn:hover { background: #dddddd; }
 
-    /* Botón flotante Tuerca */
-    .admin-trigger {
+    /* POP-UP DE ENTRADA (Early Access) */
+    .popup-overlay {
       position: fixed;
-      bottom: 25px;
-      right: 25px;
-      z-index: 100;
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      padding: 20px;
+    }
+
+    .popup-content {
+      background: #000;
+      border: 1px solid #333;
+      width: 100%;
+      max-width: 440px;
+      padding: 40px 25px;
+      text-align: center;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 15px; right: 20px;
+      background: none; border: none;
+      color: #888; font-size: 1.5rem;
       cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: transform 0.2s ease, background 0.3s ease;
     }
 
-    .admin-trigger:hover {
-      transform: rotate(45deg) scale(1.05);
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    /* Panel Lateral Admin */
-    .admin-panel {
-      position: fixed;
-      top: 0;
-      right: -380px;
-      width: 340px;
-      height: 100vh;
-      background: rgba(15, 15, 15, 0.95);
-      border-left: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(15px);
-      z-index: 99;
-      padding: 30px 20px;
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.8);
-      transition: right 0.4s ease;
-      overflow-y: auto;
-    }
-
-    .admin-panel.open {
-      right: 0;
-    }
-
-    .admin-panel h2 {
-      font-size: 1.3rem;
-      margin-bottom: 20px;
+    .popup-h2 {
+      font-size: 1.6rem;
+      font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 1px;
-      border-bottom: 1px solid #333;
-      padding-bottom: 10px;
+      margin-bottom: 15px;
     }
 
-    .admin-group {
-      margin-bottom: 16px;
-    }
-
-    .admin-group label {
-      display: block;
-      font-size: 0.8rem;
+    .popup-p {
+      font-size: 0.85rem;
       color: #aaa;
-      margin-bottom: 6px;
-      text-transform: uppercase;
+      margin-bottom: 25px;
+      line-height: 1.4;
     }
 
-    .admin-group input {
-      width: 100%;
-      padding: 10px;
-      background: #222;
-      border: 1px solid #444;
-      border-radius: 6px;
-      color: #fff;
-      font-family: inherit;
-    }
-
-    .admin-btn {
+    .popup-input {
       width: 100%;
       padding: 12px;
-      background: #fff;
-      color: #000;
-      font-weight: bold;
+      background: #111;
+      border: 1px solid #333;
+      color: white;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .popup-btn {
+      width: 100%;
+      padding: 14px;
+      background: #ff3333;
+      color: white;
+      font-weight: 900;
       border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      border-radius: 4px;
       text-transform: uppercase;
-      margin-top: 10px;
+      letter-spacing: 1px;
+      cursor: pointer;
     }
 
-    .admin-btn:hover {
-      background: #ccc;
+    /* CARRITO LATERAL (Slide-out Cart) */
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -420px;
+      width: 100%; max-width: 400px;
+      height: 100vh;
+      background: #0a0a0a;
+      border-left: 1px solid #222;
+      z-index: 900;
+      padding: 25px;
+      display: flex;
+      flex-direction: column;
+      transition: right 0.3s ease;
     }
 
-    .delete-list {
-      margin-top: 25px;
-      border-top: 1px solid #333;
-      padding-top: 15px;
-    }
+    .cart-drawer.open { right: 0; }
 
-    .delete-item {
+    .cart-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #1a1a1a;
-      padding: 8px 10px;
-      border-radius: 6px;
-      margin-bottom: 8px;
-      font-size: 0.85rem;
+      border-bottom: 1px solid #222;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
     }
 
-    .btn-del {
-      background: #ff4444;
-      color: white;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.75rem;
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
     }
+
+    .cart-item {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #1a1a1a;
+      padding-bottom: 15px;
+    }
+
+    .cart-item-img {
+      width: 70px; height: 70px;
+      background: #222; object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .cart-item-info h4 { font-size: 0.95rem; }
+    .cart-item-info p { font-size: 0.85rem; color: #888; margin-top: 4px; }
+
+    .cart-footer {
+      border-top: 1px solid #222;
+      padding-top: 15px;
+    }
+
+    .cart-subtotal {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      padding: 14px;
+      background: #fff;
+      color: #000;
+      font-weight: 900;
+      border: none;
+      border-radius: 4px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* CHECKOUT MODAL */
+    .checkout-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 1100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .checkout-box {
+      background: #111;
+      border: 1px solid #333;
+      width: 100%; max-width: 500px;
+      padding: 30px;
+      border-radius: 8px;
+    }
+
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 4px;
+    }
+
+    /* BOTÓN TUERCA ADMIN */
+    .admin-trigger {
+      position: fixed; bottom: 20px; left: 20px; z-index: 800;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: white; width: 45px; height: 45px; border-radius: 50%;
+      cursor: pointer; font-size: 1.2rem;
+    }
+
+    .admin-panel {
+      position: fixed; top: 0; left: -360px;
+      width: 320px; height: 100vh; background: #080808;
+      border-right: 1px solid #222; z-index: 850; padding: 25px;
+      transition: left 0.3s ease; overflow-y: auto;
+    }
+    .admin-panel.open { left: 0; }
   </style>
 </head>
 <body>
 
-  <!-- Fondo 3D -->
   <canvas id="canvas3d"></canvas>
 
-  <div class="main-container">
-    <header>
-      <h1>GRAND HUSTLES</h1>
-      <p class="subtitle">STREETWEAR & LIMITED DROPS</p>
-    </header>
+  <div class="main-wrapper">
+    <nav>
+      <div class="logo">GRAND HUSTLES</div>
+      <div class="nav-icons">
+        <button class="cart-btn-icon" onclick="toggleCart()">
+          🛒 <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </div>
+    </nav>
 
-    <main class="grid-container" id="productsGrid">
-      <!-- Los productos se cargan dinámicamente -->
-    </main>
+    <div class="section-title">ALL PRODUCTS</div>
+    <div class="grid-container" id="productsGrid"></div>
   </div>
 
-  <!-- Botón Tuerca -->
+  <!-- POP-UP ACCESO ANTICIPADO -->
+  <div class="popup-overlay" id="earlyAccessPopup">
+    <div class="popup-content">
+      <button class="popup-close" onclick="closePopup()">✕</button>
+      <div class="popup-h2">GET EARLY ACCESS TO NEW DROPS</div>
+      <div class="popup-p">JOIN THE GRAND HUSTLES LIST FOR EXCLUSIVE DROPS & OFFERS.</div>
+      <input type="text" class="popup-input" placeholder="Phone or Email">
+      <button class="popup-btn" onclick="closePopup()">SUBSCRIBE NOW</button>
+    </div>
+  </div>
+
+  <!-- CARRITO LATERAL DESLIZABLE -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3 style="font-weight: 900;">SHOPPING CART</h3>
+      <button onclick="toggleCart()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+    </div>
+    <div class="cart-items" id="cartItemsContainer"></div>
+    <div class="cart-footer">
+      <div class="cart-subtotal">
+        <span>SUBTOTAL</span>
+        <span id="cartSubtotal">$0.00 USD</span>
+      </div>
+      <button class="checkout-btn" onclick="openCheckout()">CHECKOUT</button>
+    </div>
+  </div>
+
+  <!-- MODAL DE CHECKOUT (ENVÍO Y PAGO) -->
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3 style="font-weight:900;">ORDER CHECKOUT</h3>
+        <button onclick="closeCheckout()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label>Contact Email</label>
+        <input type="email" placeholder="email@ejemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label>Shipping Address</label>
+        <input type="text" placeholder="Street Address">
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:1;">
+          <label>City</label>
+          <input type="text" placeholder="City">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Zip Code</label>
+          <input type="text" placeholder="ZIP Code">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Payment Method</label>
+        <select>
+          <option>Credit Card (Visa/Mastercard)</option>
+          <option>Apple Pay / Google Pay</option>
+          <option>Cash on Delivery / Zelle</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Card Details</label>
+        <input type="text" placeholder="Card Number">
+      </div>
+
+      <button class="checkout-btn" style="background:#00ff88; margin-top:10px;" onclick="alert('¡Gracias por tu compra! Tu orden ha sido procesada.'); closeCheckout();">COMPLETE ORDER</button>
+    </div>
+  </div>
+
+  <!-- TUERCA ADMIN -->
   <button class="admin-trigger" onclick="toggleAdminPanel()">⚙️</button>
 
-  <!-- Panel Desplegable Admin -->
   <div class="admin-panel" id="adminPanel">
-    <h2>Panel Admin</h2>
-
-    <div class="admin-group">
-      <label>Contraseña Admin</label>
-      <input type="password" id="adminPass" placeholder="Ingresa la contraseña">
+    <h3 style="margin-bottom:15px; font-weight:900;">PANEL ADMIN</h3>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="adminPass" placeholder="Clave admin">
     </div>
-
-    <div class="admin-group">
-      <label>Nombre de la Prenda</label>
-      <input type="text" id="prodName" placeholder="Ej. Cap Chucky Hats">
+    <div class="form-group">
+      <label>Nombre Drop</label>
+      <input type="text" id="prodName" placeholder="Ej. Baggy Denim">
     </div>
-
-    <div class="admin-group">
+    <div class="form-group">
       <label>Precio (USD)</label>
-      <input type="text" id="prodPrice" placeholder="Ej. $45.00">
+      <input type="text" id="prodPrice" placeholder="Ej. $84.00">
     </div>
-
-    <div class="admin-group">
-      <label>URL de la Imagen</label>
-      <input type="text" id="prodImg" placeholder="https://ejemplo.com/foto.jpg">
+    <div class="form-group">
+      <label>URL Imagen</label>
+      <input type="text" id="prodImg" placeholder="https://...">
     </div>
-
-    <button class="admin-btn" onclick="addNewProduct()">Publicar Drop</button>
-
-    <div class="delete-list">
-      <h3 style="font-size: 1rem; margin-bottom: 12px;">Inventario Activo</h3>
-      <div id="adminItemsList"></div>
-    </div>
+    <button class="add-cart-btn" onclick="addNewProduct()">PUBLICAR DROP</button>
   </div>
 
-  <!-- Script del Fondo 3D y Control del Admin -->
   <script>
-    // --- FONDO 3D CON THREE.JS ---
-    const canvas = document.getElementById('canvas3d');
+    // FONDO 3D
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
 
-    const geometry = new THREE.BufferGeometry();
-    const count = 1200;
-    const positions = new Float32Array(count * 3);
-
-    for (let i = 0; i < count * 3; i++) {
-      positions[i] = (Math.random() - 0.5) * 15;
-    }
-
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    const material = new THREE.PointsMaterial({
-      size: 0.035,
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.8
-    });
-
-    const particles = new THREE.Points(geometry, material);
-    scene.add(particles);
+    const count = 1000;
+    const pos = new Float32Array(count * 3);
+    for(let i=0; i<count*3; i++) pos[i] = (Math.random() - 0.5) * 15;
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const mat = new THREE.PointsMaterial({ size: 0.03, color: 0xffffff });
+    const points = new THREE.Points(geo, mat);
+    scene.add(points);
     camera.position.z = 5;
-
-    let mouseX = 0, mouseY = 0;
-    document.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
-      mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5;
-    });
 
     function animate() {
       requestAnimationFrame(animate);
-      particles.rotation.y += 0.0015;
-      particles.rotation.x += 0.0008;
-      camera.position.x += (mouseX - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY - camera.position.y) * 0.05;
-      camera.lookAt(scene.position);
+      points.rotation.y += 0.001;
       renderer.render(scene, camera);
     }
     animate();
 
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
+    // POP-UP Y PANEL
+    function closePopup() { document.getElementById('earlyAccessPopup').style.display = 'none'; }
+    function toggleCart() { document.getElementById('cartDrawer').classList.toggle('open'); }
+    function toggleAdminPanel() { document.getElementById('adminPanel').classList.toggle('open'); }
+    function openCheckout() { document.getElementById('checkoutModal').style.display = 'flex'; }
+    function closeCheckout() { document.getElementById('checkoutModal').style.display = 'none'; }
 
-    // --- LÓGICA DE TIENDA Y ADMIN ---
-    function toggleAdminPanel() {
-      const panel = document.getElementById('adminPanel');
-      panel.classList.toggle('open');
+    // CARRITO DE COMPRAS
+    let cart = [];
+
+    function addToCart(name, price, img, sizeId) {
+      const size = document.getElementById(sizeId).value;
+      cart.push({ name, price, img, size });
+      updateCartUI();
+      toggleCart();
     }
 
+    function updateCartUI() {
+      document.getElementById('cartCount').innerText = cart.length;
+      const container = document.getElementById('cartItemsContainer');
+      container.innerHTML = '';
+      let total = 0;
+
+      cart.forEach((item, idx) => {
+        const numPrice = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0;
+        total += numPrice;
+
+        container.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.img}" class="cart-item-img">
+            <div class="cart-item-info">
+              <h4>${item.name}</h4>
+              <p>Talla: ${item.size}</p>
+              <p style="color:#fff; font-weight:bold; margin-top:2px;">${item.price}</p>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('cartSubtotal').innerText = `$${total.toFixed(2)} USD`;
+    }
+
+    // CARGAR PRODUCTOS DESDE EL BACKEND
     async function loadProducts() {
       try {
         const res = await fetch('/api/products');
         const data = await res.json();
         const grid = document.getElementById('productsGrid');
-        const adminList = document.getElementById('adminItemsList');
-        
         grid.innerHTML = '';
-        adminList.innerHTML = '';
 
-        if (data.products && data.products.length > 0) {
-          data.products.forEach((prod, index) => {
-            // Formato esperado: Nombre | Precio | ImgURL
+        if(data.products) {
+          data.products.forEach((prod, i) => {
             const parts = prod.split(' | ');
-            const name = parts[0] || prod;
-            const price = parts[1] || '';
-            const imgUrl = parts[2] || 'https://via.placeholder.com/300x300/222/fff?text=GRAND+HUSTLES';
+            const name = parts[0] || 'Drop Item';
+            const price = parts[1] || '$0.00';
+            const img = parts[2] || 'https://via.placeholder.com/300x300/111/fff?text=GRAND+HUSTLES';
 
-            // Renderizar Tarjeta
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-              <div>
-                <div class="card-img-container">
-                  <img src="${imgUrl}" alt="${name}" class="card-img" onerror="this.src='https://via.placeholder.com/300x300/222/fff?text=No+Image'">
+            grid.innerHTML += `
+              <div class="product-card">
+                <div>
+                  <div class="img-box"><img src="${img}"></div>
+                  <div class="prod-title">${name}</div>
+                  <div class="prod-price">${price} USD</div>
+                  <select class="size-select" id="size-${i}">
+                    <option value="S / 28">SELECT SIZE: 28 / S</option>
+                    <option value="M / 30">SELECT SIZE: 30 / M</option>
+                    <option value="L / 32">SELECT SIZE: 32 / L</option>
+                    <option value="XL / 34">SELECT SIZE: 34 / XL</option>
+                    <option value="XXL / 36">SELECT SIZE: 36 / XXL</option>
+                  </select>
                 </div>
-                <h3>${name}</h3>
-                <p class="price">${price}</p>
+                <button class="add-cart-btn" onclick="addToCart('${name}', '${price}', '${img}', 'size-${i}')">ADD TO CART</button>
               </div>
-              <button class="buy-btn">Ver Drop</button>
             `;
-            grid.appendChild(card);
-
-            // Renderizar Lista Admin
-            const adminItem = document.createElement('div');
-            adminItem.className = 'delete-item';
-            adminItem.innerHTML = `
-              <span>${index + 1}. ${name}</span>
-              <button class="btn-del" onclick="deleteProduct(${index + 1})">Eliminar</button>
-            `;
-            adminList.appendChild(adminItem);
           });
-        } else {
-          grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No hay drops activos por ahora.</p>';
         }
-      } catch (err) {
-        console.error('Error cargando productos:', err);
-      }
+      } catch(e) { console.error(e); }
     }
 
     async function addNewProduct() {
@@ -433,61 +574,21 @@
       const price = document.getElementById('prodPrice').value;
       const img = document.getElementById('prodImg').value;
 
-      if (!pass) return alert('Ingresa la contraseña admin.');
-      if (!name) return alert('Ingresa el nombre del producto.');
+      if(!pass || !name) return alert('Ingresa la contraseña y nombre del producto.');
+      const fullProduct = `${name} | ${price || '$0.00'} | ${img}`;
 
-      // Combinar los datos con separador |
-      const fullProduct = `${name} | ${price || '$0.00'} | ${img || ''}`;
-
-      try {
-        const res = await fetch('/api/products', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': pass
-          },
-          body: JSON.stringify({ product: fullProduct })
-        });
-
-        const data = await res.json();
-        if (data.ok) {
-          alert('¡Drop publicado con éxito!');
-          document.getElementById('prodName').value = '';
-          document.getElementById('prodPrice').value = '';
-          document.getElementById('prodImg').value = '';
-          loadProducts();
-        } else {
-          alert('Error: ' + (data.error || 'Clave incorrecta'));
-        }
-      } catch (err) {
-        alert('Error de conexión con el servidor.');
-      }
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': pass },
+        body: JSON.stringify({ product: fullProduct })
+      });
+      const data = await res.json();
+      if(data.ok) {
+        alert('Drop publicado');
+        loadProducts();
+      } else { alert('Error: ' + data.error); }
     }
 
-    async function deleteProduct(index) {
-      const pass = document.getElementById('adminPass').value;
-      if (!pass) return alert('Ingresa la contraseña en la casilla superior para eliminar.');
-
-      try {
-        const res = await fetch(`/api/products/${index}`, {
-          method: 'DELETE',
-          headers: {
-            'x-api-key': pass
-          }
-        });
-
-        const data = await res.json();
-        if (data.ok) {
-          loadProducts();
-        } else {
-          alert('Error: ' + (data.error || 'Clave incorrecta'));
-        }
-      } catch (err) {
-        alert('Error de conexión con el servidor.');
-      }
-    }
-
-    // Cargar productos al iniciar
     loadProducts();
   </script>
 </body>
