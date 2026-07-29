@@ -1,231 +1,257 @@
- <!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Grand Hustles - Store</title>
-  <style>
-    * { box-sizing: border-box; }
-    body { font-family: 'Helvetica Neue', Arial, sans-serif; background:#0b0b0d; color:#eee; margin:0; padding:0; }
-    .header { background: linear-gradient(180deg, #181820 0%, #0b0b0d 100%); padding: 40px 20px; text-align:center; border-bottom: 1px solid #1f1f26; }
-    .logo { font-family: 'Courier New', Courier, monospace; color:#ffdd57; font-size:32px; font-weight: bold; letter-spacing:6px; text-transform: uppercase; }
-    .subtitle { color:#8a8a9e; margin-top:10px; font-size:14px; letter-spacing: 1px; }
-    .container { padding: 30px 20px; max-width: 1100px; margin: 0 auto; }
-    .section-title { color: #ffdd57; font-size: 22px; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1.5px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .card { background: #131317; border: 1px solid #22222a; border-radius: 12px; padding: 15px; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; justify-content: space-between; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.7); border-color: #333342; }
-    .product-image { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; background-color: #1a1a22; }
-    .p-title { font-weight: 700; color: #fff; margin: 12px 0 4px; font-size: 18px; }
-    .p-price { color: #ffdd57; font-weight: 700; font-size: 16px; margin-bottom: 8px; }
-    .p-inst { color: #8a8a9e; font-size: 13px; margin-bottom: 12px; }
-    .buy { display: block; text-align: center; padding: 10px; background: #e63946; color: #fff; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; transition: background 0.2s; }
-    .buy:hover { background: #d62828; }
-    .footer { text-align: center; color: #666; padding: 30px 20px; font-size: 14px; border-top: 1px solid #15151c; margin-top: 40px; }
-    .footer a { color: #ffdd57; text-decoration: none; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRAND HUSTLES - Streetwear Drops</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+  <!-- Cargar Three.js para gráficos 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    /* Admin UI Estilizado */
-    #admin-btn { position: fixed; right: 20px; bottom: 20px; background: #ffdd57; color: #111; border-radius: 50%; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 20px rgba(0,0,0,0.6); font-size: 22px; z-index: 1000; transition: transform 0.2s; }
-    #admin-btn:hover { transform: scale(1.08); }
-    #admin-modal { position: fixed; right: 20px; bottom: 82px; width: 340px; max-width: calc(100vw - 40px); background: #131317; border: 1px solid #2a2a36; padding: 20px; border-radius: 12px; display: none; z-index: 2000; box-shadow: 0 12px 35px rgba(0,0,0,0.8); }
-    .admin-header { font-weight: 700; font-size: 16px; color: #ffdd57; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-    #admin-modal input, #admin-modal button { width: 100%; box-sizing: border-box; margin: 6px 0; padding: 10px 12px; border-radius: 8px; border: 1px solid #2a2a36; background: #0b0b0d; color: #eee; font-size: 14px; }
-    #admin-modal input:focus { outline: none; border-color: #ffdd57; }
-    #admin-modal button.btn-add { background: #ffdd57; color: #111; font-weight: bold; border: none; cursor: pointer; margin-top: 10px; transition: opacity 0.2s; }
-    #admin-modal button.btn-add:hover { opacity: 0.9; }
-    .admin-product { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 8px 0; border-bottom: 1px solid #1f1f28; font-size: 13px; }
-    .admin-product button { width: auto; background: #e63946; border: none; color: #fff; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; margin: 0; }
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #050505;
+      color: #ffffff;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Lienzo 3D de fondo */
+    #canvas3d {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Contenido encima del 3D */
+    .main-container {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 40px 0 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #ffffff, #888888);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    p.subtitle {
+      font-size: 1rem;
+      color: #888;
+      letter-spacing: 2px;
+      margin-top: 5px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+
+    .card {
+      background: rgba(20, 20, 20, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(255, 255, 255, 0.4);
+      box-shadow: 0 12px 40px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .card h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .card p {
+      color: #bbb;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+
+    .buy-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #000000;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
+
+    .buy-btn:hover {
+      background: #dddddd;
+      transform: scale(1.02);
+    }
+
+    /* Botón flotante para Admin */
+    .admin-trigger {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 10;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: background 0.3s ease;
+    }
+
+    .admin-trigger:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">GRAND HUSTLES</div>
-    <div class="subtitle">Streetwear drops • Edición limitada • @grand_hustle_studio</div>
-  </div>
-  <div class="container">
-    <div class="section-title">Colección Actual</div>
-    <div class="grid" id="products"></div>
-  </div>
-  <div class="footer">
-    Sigue en Instagram: <a href="https://www.instagram.com/grand_hustle_studio" target="_blank">@grand_hustle_studio</a>
+
+  <!-- Fondo 3D con Three.js -->
+  <canvas id="canvas3d"></canvas>
+
+  <div class="main-container">
+    <header>
+      <h1>GRAND HUSTLES</h1>
+      <p class="subtitle">STREETWEAR & LIMITED DROPS</p>
+    </header>
+
+    <main class="grid-container" id="productsGrid">
+      <div class="card">
+        <h3>Hellstar Tee</h3>
+        <p>$120.00 USD</p>
+        <button class="buy-btn">Ver Drop</button>
+      </div>
+
+      <div class="card">
+        <h3>BAPE Sta Tee</h3>
+        <p>$110.00 USD</p>
+        <button class="buy-btn">Ver Drop</button>
+      </div>
+
+      <div class="card">
+        <h3>Cap Collection (Barbas/Chucky)</h3>
+        <p>$45.00 USD</p>
+        <button class="buy-btn">Ver Drop</button>
+      </div>
+
+      <div class="card">
+        <h3>Limited Drop Hoodie</h3>
+        <p>$150.00 USD</p>
+        <button class="buy-btn">Ver Drop</button>
+      </div>
+    </main>
   </div>
 
-  <!-- Admin Floating Button & Modal -->
-  <div id="admin-btn" title="Panel de Control Admin">⚙️</div>
-  <div id="admin-modal" aria-hidden="true">
-    <div class="admin-header">
-      <span>Panel Admin</span>
-      <span style="font-size:12px; color:#888;">Grand Hustles</span>
-    </div>
-    <input id="api-key" type="password" placeholder="Clave de API Admin" />
-    <hr style="border: 0; border-top: 1px solid #2a2a36; margin: 10px 0;" />
-    
-    <div style="font-size: 13px; font-weight: bold; color: #ddd; margin-bottom: 4px;">Agregar Prenda</div>
-    <input id="new-title" type="text" placeholder="Nombre (ej: Hellstar Tee)" />
-    <input id="new-price" type="text" placeholder="Precio (ej: $120)" />
-    <input id="new-image" type="text" placeholder="URL Imagen (Opcional)" />
-    <button id="add-product" class="btn-add">Publicar Drop</button>
+  <button class="admin-trigger" onclick="alert('Panel Admin')">⚙️</button>
 
-    <div style="margin-top: 15px; font-weight: 600; font-size: 13px; color: #ffdd57;">Inventario Activo</div>
-    <div id="admin-products" style="max-height: 180px; overflow-y: auto; margin-top: 6px;"></div>
-  </div>
-
+  <!-- Script del Fondo 3D Interactivo -->
   <script>
-    const imageMap = {
-      'Hellstar Tee': 'https://via.placeholder.com/600x400/1f1f2b/ffdd57?text=Hellstar+Tee',
-      'BAPE Sta Tee': 'https://via.placeholder.com/600x400/0b4f6c/fff?text=BAPE+Sta+Tee',
-      'Barbas/Chucky Hat': 'https://via.placeholder.com/600x400/2b2b2b/fff?text=Barbas+Hat',
-      'Limited Drop Hoodie': 'https://via.placeholder.com/600x400/3a0b0b/ffdd57?text=Limited+Hoodie'
-    };
+    const canvas = document.getElementById('canvas3d');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
 
-    const container = document.getElementById('products');
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
 
-    function renderProducts(products) {
-      container.innerHTML = '';
-      products.forEach(p => {
-        let title = p;
-        let price = '';
-        let img = '';
+    // Crear sistema de partículas en 3D
+    const geometry = new THREE.BufferGeometry();
+    const count = 1200;
+    const positions = new Float32Array(count * 3);
 
-        if (typeof p === 'string') {
-          const parts = p.split(' - ');
-          title = parts[0];
-          price = parts[1] ? parts[1] : '';
-        } else if (typeof p === 'object') {
-          title = p.title || p.product || '';
-          price = p.price || '';
-          img = p.image || '';
-        }
-
-        if (!img) {
-          img = imageMap[title] || 'https://via.placeholder.com/600x400/151518/ffdd57?text=' + encodeURIComponent(title);
-        }
-
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div>
-            <img class="product-image" src="${img}" alt="${title}" onerror="this.src='https://via.placeholder.com/600x400/151518/ffdd57?text=Grand+Hustles'" />
-            <div class="p-title">${title}</div>
-            <div class="p-price">${price}</div>
-            <div class="p-inst">Disponible • Edición Limitada</div>
-          </div>
-          <a class="buy" href="https://www.instagram.com/grand_hustle_studio" target="_blank">Pedir en Instagram</a>
-        `;
-        container.appendChild(card);
-      });
+    for (let i = 0; i < count * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 15;
     }
 
-    function loadProducts() {
-      fetch('/api/products')
-        .then(r => r.json())
-        .then(data => {
-          const products = data && data.products ? data.products : [];
-          renderProducts(products);
-        })
-        .catch(err => {
-          console.error('Error al cargar productos:', err);
-          renderProducts([]);
-        });
-    }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-    function setupSSE() {
-      if (!window.EventSource) return;
-      const es = new EventSource('/events');
-      es.addEventListener('update', () => loadProducts());
-    }
-
-    loadProducts();
-    setupSSE();
-
-    // Admin UI Control
-    const adminBtn = document.getElementById('admin-btn');
-    const adminModal = document.getElementById('admin-modal');
-    const apiKeyInput = document.getElementById('api-key');
-    const addBtn = document.getElementById('add-product');
-    const adminProductsDiv = document.getElementById('admin-products');
-
-    if (localStorage.getItem('gh_admin_key')) {
-      apiKeyInput.value = localStorage.getItem('gh_admin_key');
-    }
-
-    adminBtn.addEventListener('click', () => {
-      const isVisible = adminModal.style.display === 'block';
-      adminModal.style.display = isVisible ? 'none' : 'block';
-      if (!isVisible) renderAdminProducts();
+    const material = new THREE.PointsMaterial({
+      size: 0.035,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.8
     });
 
-    function getApiKey() {
-      const key = apiKeyInput.value.trim();
-      if (key) localStorage.setItem('gh_admin_key', key);
-      return key;
-    }
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
 
-    function renderAdminProducts() {
-      fetch('/api/products').then(r => r.json()).then(data => {
-        const products = data && data.products ? data.products : [];
-        adminProductsDiv.innerHTML = '';
-        products.forEach((p, idx) => {
-          let name = typeof p === 'object' ? (p.title || p.product) : p;
-          const item = document.createElement('div');
-          item.className = 'admin-product';
-          item.innerHTML = `
-            <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">${idx+1}. ${name}</span>
-            <button onclick="deleteProductWeb(${idx+1})">Eliminar</button>
-          `;
-          adminProductsDiv.appendChild(item);
-        });
-      });
-    }
+    camera.position.z = 5;
 
-    addBtn.addEventListener('click', () => {
-      const title = document.getElementById('new-title').value.trim();
-      const price = document.getElementById('new-price').value.trim();
-      const image = document.getElementById('new-image').value.trim();
-      const apiKey = getApiKey();
+    // Movimiento interactivo con el ratón / toque
+    let mouseX = 0;
+    let mouseY = 0;
 
-      if (!title) return alert('Escribe el nombre de la prenda');
-      if (!apiKey) return alert('Ingresa la Clave de API Admin');
-
-      const fullProduct = price ? `${title} - ${price}` : title;
-
-      fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
-        body: JSON.stringify({ product: fullProduct, image: image })
-      })
-      .then(r => r.json())
-      .then(resp => {
-        if (resp && resp.ok) {
-          document.getElementById('new-title').value = '';
-          document.getElementById('new-price').value = '';
-          document.getElementById('new-image').value = '';
-          renderAdminProducts();
-          loadProducts();
-        } else {
-          alert('Error: ' + (resp && resp.error ? resp.error : 'Clave incorrecta u otro error'));
-        }
-      }).catch(() => alert('Error de red al conectar con el servidor'));
+    document.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 0.5;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 0.5;
     });
 
-    function deleteProductWeb(index) {
-      const apiKey = getApiKey();
-      if (!apiKey) return alert('Ingresa la Clave de API Admin');
-      
-      fetch(`/api/products/${index}`, {
-        method: 'DELETE',
-        headers: { 'x-api-key': apiKey }
-      })
-      .then(r => r.json())
-      .then(resp => {
-        if (resp && resp.ok) {
-          renderAdminProducts();
-          loadProducts();
-        } else {
-          alert('Error: ' + (resp && resp.error ? resp.error : 'No se pudo eliminar'));
-        }
-      }).catch(() => alert('Error de red'));
+    // Bucle de animación 3D
+    function animate() {
+      requestAnimationFrame(animate);
+
+      particles.rotation.y += 0.0015;
+      particles.rotation.x += 0.0008;
+
+      camera.position.x += (mouseX - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY - camera.position.y) * 0.05;
+      camera.lookAt(scene.position);
+
+      renderer.render(scene, camera);
     }
+
+    animate();
+
+    // Reajustar en cambio de tamaño de pantalla
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   </script>
 </body>
 </html>
