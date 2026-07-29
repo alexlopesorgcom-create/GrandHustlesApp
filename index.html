@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GRAND HUSTLES - Streetwear Drops</title>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-  <!-- Three.js para gráficos 3D -->
+  <!-- Three.js para el fondo 3D -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
@@ -23,7 +23,7 @@
       min-height: 100vh;
     }
 
-    /* Fondo 3D */
+    /* Canvas 3D de fondo */
     #canvas3d {
       position: fixed;
       top: 0;
@@ -78,10 +78,13 @@
       background: rgba(20, 20, 20, 0.65);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
-      padding: 25px;
+      padding: 20px;
       backdrop-filter: blur(10px);
       transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .card:hover {
@@ -90,16 +93,35 @@
       box-shadow: 0 12px 40px 0 rgba(255, 255, 255, 0.15);
     }
 
+    .card-img-container {
+      width: 100%;
+      height: 220px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 15px;
+      background: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .card h3 {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: #fff;
     }
 
-    .card p {
-      color: #bbb;
-      font-size: 1rem;
+    .card p.price {
+      color: #00ff88;
+      font-size: 1.1rem;
+      font-weight: bold;
       margin-bottom: 15px;
     }
 
@@ -150,8 +172,8 @@
     .admin-panel {
       position: fixed;
       top: 0;
-      right: -360px;
-      width: 320px;
+      right: -380px;
+      width: 340px;
       height: 100vh;
       background: rgba(15, 15, 15, 0.95);
       border-left: 1px solid rgba(255, 255, 255, 0.15);
@@ -177,7 +199,7 @@
     }
 
     .admin-group {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .admin-group label {
@@ -268,17 +290,22 @@
 
     <div class="admin-group">
       <label>Contraseña Admin</label>
-      <input type="password" id="adminPass" placeholder="Ingresa tu clave">
+      <input type="password" id="adminPass" placeholder="Ingresa la contraseña">
     </div>
 
     <div class="admin-group">
-      <label>Nombre del Producto</label>
+      <label>Nombre de la Prenda</label>
       <input type="text" id="prodName" placeholder="Ej. Cap Chucky Hats">
     </div>
 
     <div class="admin-group">
       <label>Precio (USD)</label>
-      <input type="text" id="prodPrice" placeholder="Ej. $45">
+      <input type="text" id="prodPrice" placeholder="Ej. $45.00">
+    </div>
+
+    <div class="admin-group">
+      <label>URL de la Imagen</label>
+      <input type="text" id="prodImg" placeholder="https://ejemplo.com/foto.jpg">
     </div>
 
     <button class="admin-btn" onclick="addNewProduct()">Publicar Drop</button>
@@ -289,9 +316,9 @@
     </div>
   </div>
 
-  <!-- Script del Fondo 3D y Funcionalidad Admin -->
+  <!-- Script del Fondo 3D y Control del Admin -->
   <script>
-    // --- FONDO 3D ---
+    // --- FONDO 3D CON THREE.JS ---
     const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -344,7 +371,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // --- LÓGICA PANEL ADMIN Y TIENDA ---
+    // --- LÓGICA DE TIENDA Y ADMIN ---
     function toggleAdminPanel() {
       const panel = document.getElementById('adminPanel');
       panel.classList.toggle('open');
@@ -362,12 +389,23 @@
 
         if (data.products && data.products.length > 0) {
           data.products.forEach((prod, index) => {
-            // Renderizar Card
+            // Formato esperado: Nombre | Precio | ImgURL
+            const parts = prod.split(' | ');
+            const name = parts[0] || prod;
+            const price = parts[1] || '';
+            const imgUrl = parts[2] || 'https://via.placeholder.com/300x300/222/fff?text=GRAND+HUSTLES';
+
+            // Renderizar Tarjeta
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `
-              <h3>${prod.split(' - ')[0] || prod}</h3>
-              <p>${prod.split(' - ')[1] || ''}</p>
+              <div>
+                <div class="card-img-container">
+                  <img src="${imgUrl}" alt="${name}" class="card-img" onerror="this.src='https://via.placeholder.com/300x300/222/fff?text=No+Image'">
+                </div>
+                <h3>${name}</h3>
+                <p class="price">${price}</p>
+              </div>
               <button class="buy-btn">Ver Drop</button>
             `;
             grid.appendChild(card);
@@ -376,13 +414,13 @@
             const adminItem = document.createElement('div');
             adminItem.className = 'delete-item';
             adminItem.innerHTML = `
-              <span>${index + 1}. ${prod}</span>
+              <span>${index + 1}. ${name}</span>
               <button class="btn-del" onclick="deleteProduct(${index + 1})">Eliminar</button>
             `;
             adminList.appendChild(adminItem);
           });
         } else {
-          grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No hay drops disponibles por ahora.</p>';
+          grid.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">No hay drops activos por ahora.</p>';
         }
       } catch (err) {
         console.error('Error cargando productos:', err);
@@ -393,11 +431,13 @@
       const pass = document.getElementById('adminPass').value;
       const name = document.getElementById('prodName').value;
       const price = document.getElementById('prodPrice').value;
+      const img = document.getElementById('prodImg').value;
 
-      if (!pass) return alert('Por favor ingresa la contraseña.');
-      if (!name) return alert('Ingresa el nombre de la prenda.');
+      if (!pass) return alert('Ingresa la contraseña admin.');
+      if (!name) return alert('Ingresa el nombre del producto.');
 
-      const fullProduct = price ? `${name} - ${price}` : name;
+      // Combinar los datos con separador |
+      const fullProduct = `${name} | ${price || '$0.00'} | ${img || ''}`;
 
       try {
         const res = await fetch('/api/products', {
@@ -411,9 +451,10 @@
 
         const data = await res.json();
         if (data.ok) {
-          alert('¡Producto agregado con éxito!');
+          alert('¡Drop publicado con éxito!');
           document.getElementById('prodName').value = '';
           document.getElementById('prodPrice').value = '';
+          document.getElementById('prodImg').value = '';
           loadProducts();
         } else {
           alert('Error: ' + (data.error || 'Clave incorrecta'));
