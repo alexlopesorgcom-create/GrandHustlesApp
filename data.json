@@ -1,14 +1,43 @@
-{
-  "products": [
-    "Hellstar Tee - $120",
-    "BAPE Sta Tee - $110",
-    "Cap Collection (Barbas/Chucky) - $45",
-    "Limited Drop Hoodie - $150",
-    " sudadera amrilla - $40",
-    "camisa b  $45"
-  ],
-  "orders": [
-    "Orden #1001 - Hellstar Tee - Usuario: user1",
-    "Orden #1002 - Limited Drop Hoodie - Usuario: user2"
-  ]
-}
+ // Lista en memoria (inicia con tus datos por defecto)
+let products = [
+  "Hellstar Tee - $120",
+  "BAPE Sta Tee - $110",
+  "Cap Collection (Barbas/Chucky) - $45",
+  "Limited Drop Hoodie - $150"
+];
+
+// Obtener productos
+app.get('/api/products', (req, res) => {
+  res.json({ products });
+});
+
+// Agregar producto
+app.post('/api/products', (req, res) => {
+  const apiKey = req.headers['x-api-key'];
+  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'TU_CLAVE_AQUI') {
+    return res.status(401).json({ ok: false, error: 'Clave de API incorrecta' });
+  }
+
+  const { product } = req.body;
+  if (!product) {
+    return res.status(400).json({ ok: false, error: 'Producto vacío' });
+  }
+
+  products.push(product);
+  res.json({ ok: true });
+});
+
+// Eliminar producto
+app.delete('/api/products/:index', (req, res) => {
+  const apiKey = req.headers['x-api-key'];
+  if (apiKey !== process.env.ADMIN_API_KEY && apiKey !== 'TU_CLAVE_AQUI') {
+    return res.status(401).json({ ok: false, error: 'Clave de API incorrecta' });
+  }
+
+  const idx = parseInt(req.params.index) - 1;
+  if (idx >= 0 && idx < products.length) {
+    products.splice(idx, 1);
+    return res.json({ ok: true });
+  }
+  res.status(400).json({ ok: false, error: 'Índice no válido' });
+});
