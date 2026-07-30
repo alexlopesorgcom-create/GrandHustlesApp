@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -137,7 +137,7 @@
       cursor: pointer;
     }
 
-    /* MODAL ACCESS CODE */
+    /* MODAL ACCESO VIP / ADMIN SECRETO */
     .access-modal {
       position: fixed;
       top: 0; left: 0;
@@ -170,6 +170,28 @@
       text-align: center;
     }
 
+    /* PANEL ADMIN OCULTO */
+    .admin-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .admin-box {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+    }
+
     /* CARRITO LATERAL */
     .cart-drawer {
       position: fixed;
@@ -188,7 +210,7 @@
       right: 0;
     }
 
-    /* CHECKOUT MODAL ESTILO 8THWNDR */
+    /* CHECKOUT MODAL */
     .checkout-modal {
       position: fixed;
       top: 0; left: 0;
@@ -263,6 +285,22 @@
     </div>
   </div>
 
+  <!-- PANEL ADMIN OCULTO (Se abre con Ctrl + Shift + A) -->
+  <div class="admin-modal" id="adminModal">
+    <div class="admin-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3>PANEL ADMIN (SECRETO)</h3>
+        <button onclick="closeAdmin()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="color:#aaa; font-size:0.85rem; margin-bottom:15px;">Aquí puedes gestionar productos o cambiar configuraciones rápidamente.</p>
+      <div class="form-group">
+        <label>Contraseña de Admin</label>
+        <input type="password" id="adminPass" placeholder="Clave secreta">
+      </div>
+      <button class="add-btn" onclick="alert('Modo Admin Activo. ¡Todo listo!')">VERIFICAR ADMIN</button>
+    </div>
+  </div>
+
   <!-- HEADER -->
   <header>
     <div class="brand-title">GRAND HUSTLES</div>
@@ -272,6 +310,19 @@
   <!-- CATALOGO -->
   <div class="container">
     <div class="product-grid">
+      
+      <!-- PRODUCTO DE PRUEBA DE $1 -->
+      <div class="product-card" style="border: 2px solid #fff;">
+        <img src="https://via.placeholder.com/400x400" class="product-img" alt="Prueba">
+        <div class="product-title">TEST PRODUCT ($1)</div>
+        <div class="product-price">$1.00 USD</div>
+        <select class="size-selector">
+          <option>Standard</option>
+        </select>
+        <button class="add-btn" onclick="addToCart('TEST PRODUCT ($1)', 1)">ADD TO CART</button>
+      </div>
+
+      <!-- PRODUCTO ORIGINAL -->
       <div class="product-card">
         <img src="https://via.placeholder.com/400x400" class="product-img" alt="Short">
         <div class="product-title">HUSTLE BLACK SHORTS</div>
@@ -284,6 +335,7 @@
         </select>
         <button class="add-btn" onclick="addToCart('HUSTLE BLACK SHORTS', 84)">ADD TO CART</button>
       </div>
+
     </div>
   </div>
 
@@ -305,7 +357,7 @@
     </div>
   </div>
 
-  <!-- MODAL DE CHECKOUT ESTILO SHOPIFY / 8THWNDR -->
+  <!-- MODAL DE CHECKOUT CON ZELLE ACTUALIZADO -->
   <div class="checkout-modal" id="checkoutModal">
     <div class="checkout-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:10px;">
@@ -313,7 +365,6 @@
         <button onclick="closeCheckout()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
       </div>
 
-      <!-- SECCIÓN CONTACTO Y ENVÍO -->
       <h4 style="font-size:0.9rem; color:#888; text-transform:uppercase; margin-bottom:10px;">Delivery</h4>
       
       <div class="form-group">
@@ -357,11 +408,10 @@
         <input type="text" placeholder="Teléfono para updates del envío">
       </div>
 
-      <!-- SECCIÓN PAGO -->
+      <!-- SECCIÓN PAGO CON ZELLE REAL -->
       <h4 style="font-size:0.9rem; color:#888; text-transform:uppercase; margin-top:20px; margin-bottom:10px;">Payment</h4>
       <p style="font-size:0.75rem; color:#666; margin-bottom:12px;">All transactions are secure and encrypted.</p>
 
-      <!-- Opciones de Pago -->
       <div style="border:1px solid #333; border-radius:6px; overflow:hidden; margin-bottom:15px;">
         
         <!-- Opción 1: Tarjeta -->
@@ -391,7 +441,7 @@
           <span style="background:#fff; color:#000; font-weight:bold; padding:2px 8px; border-radius:3px; font-size:0.75rem;">Pay</span>
         </label>
 
-        <!-- Opción 3: Zelle -->
+        <!-- Opción 3: Zelle con tu número real -->
         <label style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#1a1a1a; cursor:pointer;">
           <div>
             <input type="radio" name="payment_method" value="zelle" onclick="togglePaymentFields('zelle')">
@@ -401,15 +451,9 @@
         </label>
 
         <div id="zelleFields" style="padding:15px; background:#111; display:none; font-size:0.85rem; color:#ccc;">
-          Envía el total de tu orden a nuestro Zelle: <strong>TU_CORREO_O_TELEFONO</strong>. Coloca tu nombre en la nota.
+          Envía el total de tu orden a nuestro Zelle: <strong>+1 (714) 381 9023</strong>. Coloca tu nombre y número de orden en la nota.
         </div>
 
-      </div>
-
-      <!-- CÓDIGO DE DESCUENTO Y RESUMEN -->
-      <div style="display:flex; gap:10px; margin-bottom:15px;">
-        <input type="text" placeholder="Discount code" style="flex:1; padding:10px; background:#222; border:1px solid #444; color:white; border-radius:4px;">
-        <button style="padding:10px 15px; background:#333; color:white; border:none; border-radius:4px; font-weight:bold; cursor:pointer;">Apply</button>
       </div>
 
       <button class="checkout-btn" onclick="alert('¡Orden procesada con éxito!'); closeCheckout();">PAY NOW</button>
@@ -427,7 +471,6 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    // Partículas
     const particlesGeometry = new THREE.BufferGeometry();
     const count = 700;
     const positions = new Float32Array(count * 3);
@@ -457,7 +500,19 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // --- 2. LÓGICA DE TIENDA Y CHECKOUT ---
+    // --- 2. ATAJO SECRETO PARA ADMIN (Ctrl + Shift + A) ---
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        document.getElementById('adminModal').style.display = 'flex';
+      }
+    });
+
+    function closeAdmin() {
+      document.getElementById('adminModal').style.display = 'none';
+    }
+
+    // --- 3. LÓGICA DE TIENDA Y CHECKOUT ---
     let cart = [];
 
     function checkAccess() {
@@ -492,7 +547,7 @@
 
       let html = '';
       let total = 0;
-      cart.forEach((item, index) => {
+      cart.forEach((item) => {
         total += item.price;
         html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #222; padding-bottom:5px;">
           <span>${item.name}</span>
