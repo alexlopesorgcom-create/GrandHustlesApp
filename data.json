@@ -1,19 +1,28 @@
- const express = require('express');
+const express = require('express');
 const app = express();
 
 app.use(express.json());
 
-// Lista de productos en memoria
+// Lista de productos en memoria (Incluyendo el producto de prueba de $1)
 let products = [
+  "Producto de Prueba - $1",
   "Hellstar Tee - $120",
   "BAPE Sta Tee - $110",
   "Cap Collection (Barbas/Chucky) - $45",
   "Limited Drop Hoodie - $150"
 ];
 
-// Obtener productos
+// Instrucciones y datos de Zelle oficiales para los clientes
+const paymentInfo = {
+  zelle: {
+    phone: "+1 (714) 381 9023",
+    instructions: "Envía el total de tu orden a nuestro Zelle: +1 (714) 381 9023. Coloca tu nombre y número de orden en la nota."
+  }
+};
+
+// Obtener productos e información de pago
 app.get('/api/products', (req, res) => {
-  res.json({ products });
+  res.json({ products, paymentInfo });
 });
 
 // Eventos en vivo (SSE)
@@ -22,6 +31,18 @@ app.get('/events', (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
   res.write('retry: 10000\n\n');
+});
+
+// Verificar acceso al panel admin mediante atajo secreto
+app.post('/api/admin/verify', (req, res) => {
+  const { passcode } = req.body;
+  // Puedes usar tu clave de entorno o el respaldo 'secreto123'
+  const validKey = process.env.ADMIN_API_KEY || 'secreto123';
+  
+  if (passcode === validKey) {
+    return res.json({ ok: true, message: 'Acceso concedido' });
+  }
+  res.status(401).json({ ok: false, error: 'Clave incorrecta' });
 });
 
 // Agregar producto
