@@ -13,11 +13,26 @@
         }
 
         body {
-            background-color: #0b0b0b;
+            background-color: #050505;
             color: #ffffff;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Fondo dinámico estilo estrellas / luces brillantes */
+        .background-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 20%, rgba(255, 75, 75, 0.08), transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(75, 150, 255, 0.05), transparent 50%);
+            z-index: -1;
+            pointer-events: none;
         }
 
         header {
@@ -25,16 +40,17 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 24px;
-            border-bottom: 1px solid #1f1f1f;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: sticky;
             top: 0;
-            background-color: #0b0b0b;
+            background-color: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
             z-index: 100;
         }
 
         .logo {
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
             font-size: 1.1rem;
         }
 
@@ -93,30 +109,45 @@
         .catalog-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 24px;
+            gap: 30px;
+            perspective: 1000px;
         }
 
+        /* Efecto 3D interactivo en tarjetas */
         .product-card {
-            background-color: #121212;
-            border: 1px solid #1f1f1f;
-            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             padding: 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .product-img {
             width: 100%;
             height: 280px;
-            background-color: #1a1a1a;
-            border-radius: 4px;
+            background-color: #111;
+            border-radius: 8px;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #555;
+            color: #777;
             font-size: 0.85rem;
+            transform: translateZ(20px);
+        }
+
+        .product-info {
+            transform: translateZ(10px);
         }
 
         .product-info h3 {
@@ -141,6 +172,7 @@
             cursor: pointer;
             width: 100%;
             transition: background 0.2s;
+            transform: translateZ(15px);
         }
 
         .btn-add:hover {
@@ -154,7 +186,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
             display: none;
             justify-content: flex-end;
             z-index: 1000;
@@ -165,7 +198,8 @@
         }
 
         .modal-content {
-            background-color: #141414;
+            background-color: #0d0d0d;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
             width: 100%;
             max-width: 420px;
             height: 100%;
@@ -180,7 +214,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 16px;
             margin-bottom: 16px;
         }
@@ -198,7 +232,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 16px;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding-bottom: 16px;
         }
 
@@ -230,25 +264,79 @@
             flex: 1;
             padding: 10px;
             border-radius: 6px;
-            border: none;
+            border: 1px solid #333;
             font-weight: 600;
             cursor: pointer;
             color: #fff;
+            background-color: #000;
         }
 
-        .apple-pay { background-color: #000; border: 1px solid #333; }
-        .google-pay { background-color: #000; border: 1px solid #333; }
+        /* Formas de pago idénticas a la referencia */
+        .payment-icons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            max-width: 400px;
+            margin: 20px auto 10px auto;
+        }
+
+        .payment-badge {
+            background: #141414;
+            border: 1px solid #262626;
+            color: #ddd;
+            font-size: 0.7rem;
+            padding: 5px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Panel Admin Oculto (Ctrl + M) */
+        #admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            padding: 40px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin-box {
+            background: #111;
+            border: 1px solid #333;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .admin-box input, .admin-box button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 6px;
+        }
 
         footer {
-            padding: 24px;
+            padding: 30px 24px;
             text-align: center;
             color: #666;
             font-size: 0.8rem;
-            border-top: 1px solid #1f1f1f;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 <body>
+
+    <div class="background-glow"></div>
 
     <header>
         <div class="logo">GRAND HUSTLES</div>
@@ -265,7 +353,7 @@
     <main id="mainContent">
         <!-- Vista de Inicio por defecto -->
         <div style="text-align: center; padding: 60px 0;">
-            <div style="background-color: #1f1f1f; display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px;">OFFICIAL STORE</div>
+            <div style="background-color: rgba(255,255,255,0.08); display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">OFFICIAL STORE</div>
             <h1 style="font-size: 2.5rem; margin-bottom: 16px;">Elevate Your Style</h1>
             <p style="color: #888; max-width: 400px; margin: 0 auto 32px auto;">Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
             <button onclick="showCatalog()" class="btn-add" style="max-width: 200px; margin: 0 auto;">Ver Productos</button>
@@ -292,23 +380,50 @@
                 </div>
                 
                 <div class="express-pay">
-                    <button class="btn-express apple-pay"> Pay</button>
-                    <button class="btn-express google-pay">G Pay</button>
+                    <button class="btn-express">Shop Pay</button>
+                    <button class="btn-express"> Pay</button>
+                    <button class="btn-express">G Pay</button>
                 </div>
 
                 <div class="checkout-actions">
-                    <button class="btn-checkout" onclick="alert('Redirigiendo al formulario de envío y pago seguro...')">Check Out</button>
+                    <button class="btn-checkout" onclick="alert('Redirigiendo al checkout seguro...')">Check Out</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Panel Admin Oculto -->
+    <div id="admin-panel">
+        <div class="admin-box">
+            <h2 style="margin-bottom: 10px;">Panel Admin</h2>
+            <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;">Ingresa la contraseña de gestión.</p>
+            <input type="password" id="adminPass" placeholder="Contraseña">
+            <button onclick="verifyAdmin()" style="background:#fff; color:#000; font-weight:bold; cursor:pointer;">Entrar</button>
+            <button onclick="closeAdmin()" style="background:#333; color:#fff; cursor:pointer;">Cerrar</button>
+        </div>
+    </div>
+
     <footer>
-        &copy; 2026 Grand Hustles. Todos los derechos reservados.
+        <p style="margin-bottom: 15px; color: #888;">Country/region: UNITED STATES (USD $)</p>
+        <div class="payment-icons">
+            <div class="payment-badge">AMEX</div>
+            <div class="payment-badge">APPLE PAY</div>
+            <div class="payment-badge">BANCONTACT</div>
+            <div class="payment-badge">BLIK</div>
+            <div class="payment-badge">DISCOVER</div>
+            <div class="payment-badge">EPS</div>
+            <div class="payment-badge">GOOGLE PAY</div>
+            <div class="payment-badge">JCB</div>
+            <div class="payment-badge">MASTERCARD</div>
+            <div class="payment-badge">SHOP PAY</div>
+            <div class="payment-badge">PAYPAL</div>
+            <div class="payment-badge">VISA</div>
+            <div class="payment-badge">VENMO</div>
+        </div>
+        <p style="margin-top: 20px;">&copy; 2026 Grand Hustles. Todos los derechos reservados.</p>
     </footer>
 
     <script>
-        // Base de datos de productos simulada
         const products = [
             { id: 1, name: "I'm a star blue T-shirt", price: 40.00, img: "Blue Tee" },
             { id: 2, name: "All eyes on me t-shirt", price: 40.00, img: "Black Tee 1" },
@@ -321,7 +436,7 @@
             setActiveNav('nav-home');
             document.getElementById('mainContent').innerHTML = `
                 <div style="text-align: center; padding: 60px 0;">
-                    <div style="background-color: #1f1f1f; display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px;">OFFICIAL STORE</div>
+                    <div style="background-color: rgba(255,255,255,0.08); display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">OFFICIAL STORE</div>
                     <h1 style="font-size: 2.5rem; margin-bottom: 16px;">Elevate Your Style</h1>
                     <p style="color: #888; max-width: 400px; margin: 0 auto 32px auto;">Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
                     <button onclick="showCatalog()" class="btn-add" style="max-width: 200px; margin: 0 auto;">Ver Productos</button>
@@ -334,7 +449,7 @@
             let html = `<h2 class="section-title">Catálogo</h2><div class="catalog-grid">`;
             products.forEach(p => {
                 html += `
-                    <div class="product-card">
+                    <div class="product-card" onmousemove="handleCardRotate(event, this)" onmouseleave="resetCardRotate(this)">
                         <div>
                             <div class="product-img">[ ${p.img} ]</div>
                             <div class="product-info">
@@ -355,8 +470,8 @@
             document.getElementById('mainContent').innerHTML = `
                 <h2 class="section-title">Contacto</h2>
                 <p style="color: #888; margin-bottom: 20px;">¿Tienes dudas con tu pedido? Envíanos un mensaje.</p>
-                <input type="email" placeholder="Tu correo electrónico" style="width:100%; max-width:400px; padding:12px; background:#141414; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;">
-                <textarea placeholder="Comentario o mensaje" style="width:100%; max-width:400px; height:120px; padding:12px; background:#141414; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;"></textarea>
+                <input type="email" placeholder="Tu correo electrónico" style="width:100%; max-width:400px; padding:12px; background:#111; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;">
+                <textarea placeholder="Comentario o mensaje" style="width:100%; max-width:400px; height:120px; padding:12px; background:#111; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;"></textarea>
                 <button class="btn-add" style="max-width: 150px;" onclick="alert('Mensaje enviado con éxito')">Send</button>
             `;
         }
@@ -412,6 +527,44 @@
         function removeFromCart(index) {
             cart.splice(index, 1);
             updateCartUI();
+        }
+
+        // Efecto 3D Dinámico al mover el cursor sobre las tarjetas
+        function handleCardRotate(e, card) {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = ((y - centerY) / centerY) * -10;
+            const rotateY = ((x - centerX) / centerX) * 10;
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        }
+
+        function resetCardRotate(card) {
+            card.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        }
+
+        // Acceso Admin Oculto (Ctrl + M)
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key.toLowerCase() === 'm') {
+                e.preventDefault();
+                document.getElementById('admin-panel').style.display = 'flex';
+            }
+        });
+
+        function closeAdmin() {
+            document.getElementById('admin-panel').style.display = 'none';
+        }
+
+        function verifyAdmin() {
+            const pass = document.getElementById('adminPass').value;
+            if (pass === "fastmoney2026") {
+                alert("Acceso concedido al panel admin.");
+                closeAdmin();
+            } else {
+                alert("Contraseña incorrecta.");
+            }
         }
     </script>
 </body>
