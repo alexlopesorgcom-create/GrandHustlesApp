@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fast Money Store</title>
+    <title>Grand Hustles | Official Store</title>
     <style>
         * {
             margin: 0;
@@ -13,279 +13,146 @@
         }
 
         body {
-            background-color: #050505;
+            background-color: #0b0b0b;
             color: #ffffff;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        .background-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle at 50% 20%, rgba(255, 75, 75, 0.15), transparent 40%),
-                        radial-gradient(circle at 80% 80%, rgba(75, 150, 255, 0.1), transparent 50%);
-            z-index: -1;
-            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 30px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .menu-btn, .cart-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
+            padding: 20px 24px;
+            border-bottom: 1px solid #1f1f1f;
         }
 
         .logo {
             font-weight: 800;
-            letter-spacing: 2px;
-            font-size: 1.2rem;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
         }
 
-        .shop-container {
-            padding: 40px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+        nav a {
+            color: #888;
+            text-decoration: none;
+            margin-left: 16px;
+            font-size: 0.9rem;
+            transition: color 0.2s;
         }
 
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            font-weight: 700;
+        nav a:hover, nav a.active {
+            color: #fff;
         }
 
-        .product-slider {
+        main {
+            flex: 1;
             display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            cursor: grab;
-            padding-bottom: 20px;
-        }
-
-        .product-slider::-webkit-scrollbar {
-            display: none;
-        }
-
-        .product-slider:active {
-            cursor: grabbing;
-        }
-
-        .product-card {
-            flex: 0 0 280px;
-            scroll-snap-align: start;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
-        }
-
-        .product-image-container {
-            width: 100%;
-            height: 280px;
-            background: #111;
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
         }
 
-        .product-image-container img {
-            width: 90%;
-            height: 90%;
-            object-fit: contain;
-            pointer-events: none;
+        .badge {
+            background-color: #1f1f1f;
+            color: #ccc;
+            font-size: 0.75rem;
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 24px;
         }
 
-        .product-info {
-            margin-top: 15px;
-        }
-
-        .product-name {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .product-price {
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-
-        .product-price span {
-            color: #fff;
+        h1 {
+            font-size: 2.2rem;
             font-weight: 700;
-            margin-left: 8px;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
         }
 
-        #admin-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            padding: 40px;
+        p {
+            color: #888;
+            font-size: 0.95rem;
+            max-width: 400px;
+            margin-bottom: 32px;
+            line-height: 1.5;
         }
 
-        .admin-content {
-            max-width: 600px;
-            margin: 40px auto;
-            background: #111;
-            border: 1px solid #333;
-            padding: 30px;
-            border-radius: 10px;
-        }
-
-        .admin-content h2 {
-            margin-bottom: 20px;
-        }
-
-        .admin-content input, .admin-content button {
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background: #222;
-            border: 1px solid #444;
-            color: white;
-            border-radius: 5px;
+            max-width: 320px;
         }
 
-        .admin-content button {
-            background: #fff;
+        .btn {
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: #f1f1f1;
             color: #000;
-            font-weight: bold;
-            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #fff;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #333;
+        }
+
+        .btn-secondary:hover {
+            border-color: #666;
+        }
+
+        footer {
+            padding: 24px;
+            text-align: center;
+            color: #666;
+            font-size: 0.8rem;
+            border-top: 1px solid #1f1f1f;
         }
     </style>
 </head>
 <body>
 
-    <div class="background-glow"></div>
-
     <header>
-        <button class="menu-btn" onclick="toggleMenu()">☰</button>
-        <div class="logo">FAST MONEY</div>
-        <button class="cart-btn" onclick="toggleCart()">🛒</button>
+        <div class="logo">GRAND HUSTLES</div>
+        <nav>
+            <a href="#" class="active">Inicio</a>
+            <a href="#">Catálogo</a>
+            <a href="#">Contacto</a>
+        </nav>
     </header>
 
-    <main class="shop-container">
-        <h2 class="section-title">Featured products</h2>
+    <main>
+        <div class="badge">Official Store</div>
+        <h1>Elevate Your Style</h1>
+        <p>Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
         
-        <div class="product-slider" id="slider">
-            <div class="product-card">
-                <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500" alt="T-shirt">
-                </div>
-                <div class="product-info">
-                    <div class="product-name">I'm a star t-shirt</div>
-                    <div class="product-price"><del>$45.00 USD</del> <span>$40.00 USD</span></div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500" alt="T-shirt">
-                </div>
-                <div class="product-info">
-                    <div class="product-name">All eyes on me t-shirt</div>
-                    <div class="product-price"><del>$45.00 USD</del> <span>$40.00 USD</span></div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image-container">
-                    <img src="https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500" alt="T-shirt">
-                </div>
-                <div class="product-info">
-                    <div class="product-name">Fast money black tee</div>
-                    <div class="product-price"><del>$45.00 USD</del> <span>$40.00 USD</span></div>
-                </div>
-            </div>
+        <div class="btn-container">
+            <a href="#" class="btn btn-primary">Ver Productos</a>
+            <a href="#" class="btn btn-secondary">Saber Más</a>
         </div>
     </main>
 
-    <div id="admin-panel">
-        <div class="admin-content">
-            <h2>Panel de Administración Oculto</h2>
-            <p style="margin-bottom: 15px; color: #888; font-size: 0.9rem;">Área protegida contra accesos no autorizados.</p>
-            <input type="password" id="admin-pass" placeholder="Contraseña de administrador">
-            <button onclick="verifyAdmin()">Acceder al Panel</button>
-            <button onclick="closeAdmin()" style="background: #333; color: #fff;">Cerrar</button>
-        </div>
-    </div>
+    <footer>
+        &copy; 2026 Grand Hustles. Todos los derechos reservados.
+    </footer>
 
-    <script>
-        const slider = document.getElementById('slider');
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
-
-        slider.addEventListener('mouseleave', () => { isDown = false; });
-        slider.addEventListener('mouseup', () => { isDown = false; });
-
-        slider.addEventListener('mousemove', (e) => {
-            if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2;
-            slider.scrollLeft = scrollLeft - walk;
-        });
-
-        slider.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
-
-        slider.addEventListener('touchmove', (e) => {
-            const x = e.touches[0].pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2;
-            slider.scrollLeft = scrollLeft - walk;
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'm') {
-                e.preventDefault();
-                document.getElementById('admin-panel').style.display = 'block';
-            }
-        });
-
-        function closeAdmin() {
-            document.getElementById('admin-panel').style.display = 'none';
-        }
-
-        function verifyAdmin() {
-            const pass = document.getElementById('admin-pass').value;
-            if (pass === "tu_clave_secreta_2026") { 
-                alert("Acceso concedido.");
-            } else {
-                alert("Contraseña incorrecta.");
-            }
-        }
-
-        function toggleMenu() { alert("Menú lateral."); }
-        function toggleCart() { alert("Carrito de compras."); }
-    </script>
 </body>
 </html>
