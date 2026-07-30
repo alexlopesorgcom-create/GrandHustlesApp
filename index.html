@@ -1,587 +1,659 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grand Hustles | Official Store</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRAND HUSTLES</title>
 
-        body {
-            background-color: #0b0b0b;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-        }
+  <!-- Librería Three.js para el Fondo 3D -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <!-- SDK oficial de Stripe -->
+  <script src="https://js.stripe.com/v3/"></script>
 
-        /* Fondo dinámico con efecto 3D / luces de fondo */
-        .background-glow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.05), transparent 40%),
-                        radial-gradient(circle at 80% 80%, rgba(100, 100, 100, 0.03), transparent 50%);
-            z-index: -1;
-            pointer-events: none;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 24px;
-            border-bottom: 1px solid #1f1f1f;
-            position: sticky;
-            top: 0;
-            background-color: #0b0b0b;
-            z-index: 100;
-        }
+    body {
+      background-color: #050505;
+      color: #fff;
+      overflow-x: hidden;
+    }
 
-        .logo {
-            font-weight: 800;
-            letter-spacing: 2px;
-            font-size: 1.1rem;
-        }
+    /* CANVAS 3D FONDO */
+    #canvas3d {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
 
-        .nav-links {
-            display: flex;
-            gap: 16px;
-        }
+    /* HEADER / NAV */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(5, 5, 5, 0.6);
+      backdrop-filter: blur(10px);
+    }
 
-        .nav-links a {
-            color: #888;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-            cursor: pointer;
-        }
+    .brand-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
 
-        .nav-links a:hover, .nav-links a.active {
-            color: #fff;
-        }
+    .cart-btn {
+      background: #fff;
+      color: #000;
+      border: none;
+      padding: 8px 18px;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+    }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+    /* CONTENEDOR PRINCIPAL */
+    .container {
+      position: relative;
+      z-index: 10;
+      padding-top: 120px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
 
-        /* Botón de la tuerca para abrir el panel admin */
-        .admin-gear-btn {
-            background: none;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: color 0.2s, transform 0.2s;
-        }
+    /* GRID DE PRODUCTOS */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
 
-        .admin-gear-btn:hover {
-            color: #fff;
-            transform: rotate(90deg);
-        }
+    .product-card {
+      background: rgba(20, 20, 20, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+      transition: transform 0.3s ease;
+    }
 
-        .cart-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            font-size: 1rem;
-            position: relative;
-        }
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
 
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -10px;
-            background-color: #fff;
-            color: #000;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 50%;
-            font-weight: 700;
-        }
+    .product-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
 
-        main {
-            flex: 1;
-            padding: 40px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-        }
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
 
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 24px;
-            font-weight: 700;
-        }
+    .product-price {
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
 
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 30px;
-            perspective: 1000px;
-        }
+    .size-selector {
+      width: 100%;
+      padding: 10px;
+      background: #111;
+      color: white;
+      border: 1px solid #333;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
 
-        /* Tarjetas con efecto 3D */
-        .product-card {
-            background-color: #121212;
-            border: 1px solid #1f1f1f;
-            border-radius: 8px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.1s ease, box-shadow 0.2s ease, border-color 0.2s;
-            transform-style: preserve-3d;
-        }
+    .add-btn {
+      width: 100%;
+      padding: 12px;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
-        .product-card:hover {
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            border-color: #444;
-        }
+    /* POPUP ACCESO VIP */
+    .access-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.95);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .product-img {
-            width: 100%;
-            height: 280px;
-            background-color: #1a1a1a;
-            border-radius: 4px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #777;
-            font-size: 0.85rem;
-            transform: translateZ(20px);
-        }
+    .access-box {
+      text-align: center;
+      background: #111;
+      padding: 40px;
+      border-radius: 12px;
+      border: 1px solid #333;
+      max-width: 400px;
+      width: 90%;
+    }
 
-        .product-info {
-            transform: translateZ(10px);
-        }
+    .access-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0;
+      background: #222;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 6px;
+      text-align: center;
+    }
 
-        .product-info h3 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
+    /* PANEL ADMIN OCULTO */
+    .admin-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 2500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-        .product-info p {
-            color: #aaa;
-            font-size: 0.95rem;
-            margin-bottom: 16px;
-        }
+    .admin-box {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 100%;
+    }
 
-        .btn-add {
-            background-color: #fff;
-            color: #000;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: background 0.2s;
-            transform: translateZ(15px);
-        }
+    /* CARRITO LATERAL */
+    .cart-drawer {
+      position: fixed;
+      top: 0; right: -400px;
+      width: 380px; height: 100vh;
+      background: #111;
+      z-index: 1200;
+      transition: right 0.3s ease;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    }
 
-        .btn-add:hover {
-            background-color: #d1d1d1;
-        }
+    .cart-drawer.open {
+      right: 0;
+    }
 
-        /* Modal del Carrito / Checkout */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            display: none;
-            justify-content: flex-end;
-            z-index: 1000;
-        }
+    /* CHECKOUT MODAL */
+    .checkout-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 1500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-        .modal-overlay.open {
-            display: flex;
-        }
+    .checkout-box {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
 
-        .modal-content {
-            background-color: #141414;
-            border-left: 1px solid #222;
-            width: 100%;
-            max-width: 440px;
-            height: 100%;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-y: auto;
-        }
+    .form-group {
+      margin-bottom: 12px;
+    }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #222;
-            padding-bottom: 16px;
-            margin-bottom: 16px;
-        }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      color: #888;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
 
-        .close-modal {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: white;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
 
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 16px;
-        }
+    #card-element {
+      background: #1a1a1a;
+      padding: 12px;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
 
-        /* Sección de pago con tarjeta y métodos avanzados */
-        .checkout-section {
-            margin-top: 15px;
-            border-top: 1px solid #222;
-            padding-top: 15px;
-        }
+    .checkout-btn {
+      width: 100%;
+      padding: 15px;
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 15px;
+    }
 
-        .payment-box {
-            background: #1c1c1c;
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 12px;
-        }
-
-        .payment-option-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-input {
-            width: 100%;
-            padding: 10px;
-            background: #111;
-            border: 1px solid #333;
-            color: #fff;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-
-        .card-row {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-checkout {
-            background-color: #fff;
-            color: #000;
-            border: none;
-            padding: 14px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        /* Panel Admin Oculto por Tuerca o Ctrl+M */
-        #admin-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .admin-box {
-            background: #141414;
-            border: 1px solid #333;
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 400px;
-            width: 100%;
-        }
-
-        .admin-box input, .admin-box button {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            background: #1f1f1f;
-            border: 1px solid #444;
-            color: white;
-            border-radius: 6px;
-        }
-
-        footer {
-            padding: 24px;
-            text-align: center;
-            color: #666;
-            font-size: 0.8rem;
-            border-top: 1px solid #1f1f1f;
-        }
-    </style>
+    .checkout-btn:disabled {
+      background: #555;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="background-glow"></div>
+  <!-- CANVAS 3D -->
+  <canvas id="canvas3d"></canvas>
 
-    <header>
-        <div class="logo">GRAND HUSTLES</div>
-        <nav class="nav-links">
-            <a onclick="showHome()" class="active" id="nav-home">Inicio</a>
-            <a onclick="showCatalog()" id="nav-catalog">Catálogo</a>
-            <a onclick="showContact()" id="nav-contact">Contacto</a>
-        </nav>
-        <div class="header-actions">
-            <!-- Tuerca de administración visible -->
-            <button class="admin-gear-btn" onclick="openAdmin()" title="Panel Admin">⚙️</button>
-            <button class="cart-btn" onclick="toggleCart()">
-                🛒 <span class="cart-count" id="cartCount">0</span>
-            </button>
-        </div>
-    </header>
-
-    <main id="mainContent">
-        <!-- Vista de Inicio por defecto -->
-        <div style="text-align: center; padding: 60px 0;">
-            <div style="background-color: #1f1f1f; display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px;">OFFICIAL STORE</div>
-            <h1 style="font-size: 2.5rem; margin-bottom: 16px;">Elevate Your Style</h1>
-            <p style="color: #888; max-width: 400px; margin: 0 auto 32px auto;">Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
-            <button onclick="showCatalog()" class="btn-add" style="max-width: 200px; margin: 0 auto;">Ver Productos</button>
-        </div>
-    </main>
-
-    <!-- Modal / Carrito de Compras con Procesamiento de Tarjeta -->
-    <div class="modal-overlay" id="cartModal">
-        <div class="modal-content">
-            <div>
-                <div class="modal-header">
-                    <h2>Shopping Cart</h2>
-                    <button class="close-modal" onclick="toggleCart()">✕</button>
-                </div>
-                <div id="cartItemsContainer">
-                    <p style="color: #666; text-align: center; margin-top: 40px;">Tu carrito está vacío</p>
-                </div>
-            </div>
-            
-            <div id="cartFooter" style="display: none;">
-                <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 16px; font-size: 1.1rem;">
-                    <span>Subtotal</span>
-                    <span id="cartSubtotal">$0.00 USD</span>
-                </div>
-
-                <!-- Formas de pago integradas (Tarjeta / Apple Pay) -->
-                <div class="checkout-section">
-                    <div class="payment-box">
-                        <div class="payment-option-title">
-                            <span>💳 Credit Card</span>
-                            <span style="font-size: 0.7rem; color: #888;">Secure</span>
-                        </div>
-                        <input type="text" class="card-input" placeholder="Card number (XXXX XXXX XXXX XXXX)">
-                        <div class="card-row">
-                            <input type="text" class="card-input" placeholder="MM / YY">
-                            <input type="text" class="card-input" placeholder="CVV">
-                        </div>
-                        <input type="text" class="card-input" placeholder="Name on card">
-                    </div>
-                </div>
-
-                <button class="btn-checkout" onclick="alert('¡Compra procesada con éxito!')">Pay Now</button>
-            </div>
-        </div>
+  <!-- POPUP ACCESO VIP -->
+  <div class="access-modal" id="accessModal">
+    <div class="access-box">
+      <h2>GRAND HUSTLES</h2>
+      <p style="color:#aaa; font-size:0.85rem; margin-top:5px;">Enter VIP Access Code</p>
+      <input type="password" id="accessInput" placeholder="ENTER CODE">
+      <button class="add-btn" onclick="checkAccess()">ENTER DROP</button>
     </div>
+  </div>
 
-    <!-- Panel Admin Oculto (Se abre con la tuerca ⚙️ o Ctrl + M) -->
-    <div id="admin-panel">
-        <div class="admin-box">
-            <h2 style="margin-bottom: 10px;">Panel Admin</h2>
-            <p style="color: #888; font-size: 0.85rem; margin-bottom: 20px;">Ingresa la contraseña para gestionar la tienda.</p>
-            <input type="password" id="adminPass" placeholder="Contraseña">
-            <button onclick="verifyAdmin()" style="background:#fff; color:#000; font-weight:bold; cursor:pointer;">Entrar</button>
-            <button onclick="closeAdmin()" style="background:#222; color:#fff; cursor:pointer;">Cerrar</button>
-        </div>
+  <!-- PANEL ADMIN OCULTO (Ctrl + Shift + A) -->
+  <div class="admin-modal" id="adminModal">
+    <div class="admin-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h3>PANEL ADMIN (SECRETO)</h3>
+        <button onclick="closeAdmin()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+      <p style="color:#aaa; font-size:0.85rem; margin-bottom:15px;">Ajustes rápidos de la tienda.</p>
+      <div class="form-group">
+        <label>Contraseña de Admin</label>
+        <input type="password" id="adminPass" placeholder="Clave secreta">
+      </div>
+      <button class="add-btn" onclick="alert('Modo Admin Activo.'); closeAdmin();">VERIFICAR ADMIN</button>
     </div>
+  </div>
 
-    <footer>
-        &copy; 2026 Grand Hustles. Todos los derechos reservados.
-    </footer>
+  <!-- HEADER -->
+  <header>
+    <div class="brand-title">GRAND HUSTLES</div>
+    <button class="cart-btn" onclick="toggleCart()">CART (<span id="cartCount">0</span>)</button>
+  </header>
 
-    <script>
-        const products = [
-            { id: 1, name: "I'm a star blue T-shirt", price: 40.00, img: "Blue Tee" },
-            { id: 2, name: "All eyes on me t-shirt", price: 40.00, img: "Black Tee 1" },
-            { id: 3, name: "8W Web Baggy Jeans Black", price: 84.00, img: "Baggy Jeans" }
-        ];
+  <!-- CATALOGO -->
+  <div class="container">
+    <div class="product-grid">
+      
+      <!-- PRODUCTO DE PRUEBA DE $1 -->
+      <div class="product-card" style="border: 2px solid #fff;">
+        <img src="https://via.placeholder.com/400x400" class="product-img" alt="Prueba">
+        <div class="product-title">TEST PRODUCT ($1)</div>
+        <div class="product-price">$1.00 USD</div>
+        <select class="size-selector">
+          <option>Standard</option>
+        </select>
+        <button class="add-btn" onclick="addToCart('TEST PRODUCT ($1)', 1)">ADD TO CART</button>
+      </div>
 
-        let cart = [];
+      <!-- PRODUCTO PRINCIPAL -->
+      <div class="product-card">
+        <img src="https://via.placeholder.com/400x400" class="product-img" alt="Short">
+        <div class="product-title">HUSTLE BLACK SHORTS</div>
+        <div class="product-price">$84.00 USD</div>
+        <select class="size-selector">
+          <option>S</option>
+          <option>M</option>
+          <option>L</option>
+          <option>XL</option>
+        </select>
+        <button class="add-btn" onclick="addToCart('HUSTLE BLACK SHORTS', 84)">ADD TO CART</button>
+      </div>
 
-        function showHome() {
-            setActiveNav('nav-home');
-            document.getElementById('mainContent').innerHTML = `
-                <div style="text-align: center; padding: 60px 0;">
-                    <div style="background-color: #1f1f1f; display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px;">OFFICIAL STORE</div>
-                    <h1 style="font-size: 2.5rem; margin-bottom: 16px;">Elevate Your Style</h1>
-                    <p style="color: #888; max-width: 400px; margin: 0 auto 32px auto;">Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
-                    <button onclick="showCatalog()" class="btn-add" style="max-width: 200px; margin: 0 auto;">Ver Productos</button>
-                </div>
-            `;
+    </div>
+  </div>
+
+  <!-- CARRITO DESLIZABLE -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h3>YOUR CART</h3>
+      <button onclick="toggleCart()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+    </div>
+    <div id="cartItems" style="flex:1; overflow-y:auto;">
+      <p style="color:#666;">Your cart is empty.</p>
+    </div>
+    <div style="border-top:1px solid #222; padding-top:15px; margin-top:15px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+        <span>Total:</span>
+        <span id="cartTotal" style="font-weight:bold;">$0.00 USD</span>
+      </div>
+      <button class="checkout-btn" onclick="openCheckout()">CHECKOUT</button>
+    </div>
+  </div>
+
+  <!-- MODAL DE CHECKOUT -->
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #222; padding-bottom:10px;">
+        <h3 style="font-weight:900; letter-spacing:1px;">CHECKOUT</h3>
+        <button onclick="closeCheckout()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">✕</button>
+      </div>
+
+      <h4 style="font-size:0.9rem; color:#888; text-transform:uppercase; margin-bottom:10px;">Delivery</h4>
+      
+      <div class="form-group">
+        <label>Country / Region</label>
+        <select><option>United States</option></select>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <div class="form-group" style="flex:1;">
+          <label>First name</label>
+          <input type="text" id="custName" placeholder="Nombre completo">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <input type="text" placeholder="Dirección de envío">
+      </div>
+
+      <!-- SECCIÓN PAGO -->
+      <h4 style="font-size:0.9rem; color:#888; text-transform:uppercase; margin-top:20px; margin-bottom:10px;">Payment</h4>
+
+      <div style="border:1px solid #333; border-radius:6px; overflow:hidden; margin-bottom:15px;">
+        
+        <!-- Opción 1: Tarjeta / Stripe -->
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#1a1a1a; cursor:pointer; border-bottom:1px solid #222;">
+          <div>
+            <input type="radio" name="payment_method" value="card" checked onclick="togglePaymentFields('card')">
+            <span style="font-weight:bold; margin-left:8px; font-size:0.9rem;">Credit / Debit Card</span>
+          </div>
+          <span style="font-size:0.75rem; color:#aaa;">VISA / MC / AMEX</span>
+        </label>
+
+        <div id="cardFields" style="padding:15px; background:#111;">
+          <!-- AQUÍ SE MONTA EL ELEMENTO SEGURO DE STRIPE -->
+          <div id="card-element"></div>
+          <div id="card-errors" role="alert" style="color: #ff4d4d; font-size: 0.8rem; margin-top: 8px;"></div>
+        </div>
+
+        <!-- Opción 2: Zelle -->
+        <label style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#1a1a1a; cursor:pointer;">
+          <div>
+            <input type="radio" name="payment_method" value="zelle" onclick="togglePaymentFields('zelle')">
+            <span style="font-weight:bold; margin-left:8px; font-size:0.9rem;">Zelle Transfer</span>
+          </div>
+          <span style="color:#7414ca; font-weight:bold; font-size:0.85rem;">zelle</span>
+        </label>
+
+        <div id="zelleFields" style="padding:15px; background:#111; display:none; font-size:0.85rem; color:#ccc;">
+          Envía el total de tu orden a nuestro Zelle: <strong>+1 (714) 381 9023</strong>. Coloca tu nombre y número de orden en la nota.
+        </div>
+
+      </div>
+
+      <button class="checkout-btn" id="payButton" onclick="processPayment()">PAY NOW</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS Y LÓGICA DE STRIPE -->
+  <script>
+    // -------------------------------------------------------------
+    // 1. CONFIGURACIÓN DE STRIPE (AQUÍ PONES TU KEY PÚBLICA pk_live_...)
+    // -------------------------------------------------------------
+    const STRIPE_PUBLIC_KEY = 'pk_live_TU_LLAVE_PUBLICA_AQUI'; 
+    const stripe = Stripe(STRIPE_PUBLIC_KEY);
+    const elements = stripe.elements();
+
+    // Crear el elemento de tarjeta seguro de Stripe
+    const cardElement = elements.create('card', {
+      style: {
+        base: {
+          color: '#ffffff',
+          fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+          fontSmoothing: 'antialiased',
+          fontSize: '16px',
+          '::placeholder': { color: '#888888' }
+        },
+        invalid: {
+          color: '#ff4d4d',
+          iconColor: '#ff4d4d'
         }
+      }
+    });
 
-        function showCatalog() {
-            setActiveNav('nav-catalog');
-            let html = `<h2 class="section-title">Catálogo</h2><div class="catalog-grid">`;
-            products.forEach(p => {
-                html += `
-                    <div class="product-card" onmousemove="handleCardRotate(event, this)" onmouseleave="resetCardRotate(this)">
-                        <div>
-                            <div class="product-img">[ ${p.img} ]</div>
-                            <div class="product-info">
-                                <h3>${p.name}</h3>
-                                <p>$${p.price.toFixed(2)} USD</p>
-                            </div>
-                        </div>
-                        <button class="btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
-                    </div>
-                `;
-            });
-            html += `</div>`;
-            document.getElementById('mainContent').innerHTML = html;
-        }
+    cardElement.mount('#card-element');
 
-        function showContact() {
-            setActiveNav('nav-contact');
-            document.getElementById('mainContent').innerHTML = `
-                <h2 class="section-title">Contacto</h2>
-                <p style="color: #888; margin-bottom: 20px;">¿Tienes dudas con tu pedido? Envíanos un mensaje.</p>
-                <input type="email" placeholder="Tu correo electrónico" style="width:100%; max-width:400px; padding:12px; background:#141414; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;">
-                <textarea placeholder="Comentario o mensaje" style="width:100%; max-width:400px; height:120px; padding:12px; background:#141414; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;"></textarea>
-                <button class="btn-add" style="max-width: 150px;" onclick="alert('Mensaje enviado con éxito')">Send</button>
-            `;
-        }
+    cardElement.on('change', (event) => {
+      const displayError = document.getElementById('card-errors');
+      if (event.error) {
+        displayError.textContent = event.error.message;
+      } else {
+        displayError.textContent = '';
+      }
+    });
 
-        function setActiveNav(id) {
-            document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+    // -------------------------------------------------------------
+    // 2. PROCESAR EL PAGO CON EL BACKEND EN VERCEL
+    // -------------------------------------------------------------
+    async function processPayment() {
+      const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
 
-        function toggleCart() {
-            document.getElementById('cartModal').classList.toggle('open');
-        }
+      if (selectedMethod === 'zelle') {
+        alert('Por favor realiza la transferencia Zelle al número indicado.');
+        closeCheckout();
+        return;
+      }
 
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            cart.push(product);
-            updateCartUI();
-            toggleCart();
-        }
+      const payBtn = document.getElementById('payButton');
+      payBtn.disabled = true;
+      payBtn.innerText = 'PROCESSING...';
 
-        function updateCartUI() {
-            document.getElementById('cartCount').innerText = cart.length;
-            const container = document.getElementById('cartItemsContainer');
-            const footer = document.getElementById('cartFooter');
+      // Calcular monto total en centavos (Ej: $84.00 = 8400 centavos)
+      const totalAmount = cart.reduce((sum, item) => sum + item.price, 0) * 100;
 
-            if (cart.length === 0) {
-                container.innerHTML = `<p style="color: #666; text-align: center; margin-top: 40px;">Tu carrito está vacío</p>`;
-                footer.style.display = 'none';
-                return;
-            }
-
-            footer.style.display = 'block';
-            let html = '';
-            let subtotal = 0;
-
-            cart.forEach((item, index) => {
-                subtotal += item.price;
-                html += `
-                    <div class="cart-item">
-                        <div>
-                            <h4 style="font-size: 0.9rem; margin-bottom: 4px;">${item.name}</h4>
-                            <p style="color: #888; font-size: 0.85rem;">$${item.price.toFixed(2)} USD</p>
-                        </div>
-                        <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#888; cursor:pointer;">🗑️</button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-            document.getElementById('cartSubtotal').innerText = `$${subtotal.toFixed(2)} USD`;
-        }
-
-        function removeFromCart(index) {
-            cart.splice(index, 1);
-            updateCartUI();
-        }
-
-        // Efecto 3D en tarjetas
-        function handleCardRotate(e, card) {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const centerX = rect.width / 2;
-            const centerY = rect.height / 2;
-            const rotateX = ((y - centerY) / centerY) * -8;
-            const rotateY = ((x - centerX) / centerX) * 8;
-            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-        }
-
-        function resetCardRotate(card) {
-            card.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-        }
-
-        // Funciones del Panel Admin (por Tuerca ⚙️ o Ctrl + M)
-        function openAdmin() {
-            document.getElementById('admin-panel').style.display = 'flex';
-        }
-
-        function closeAdmin() {
-            document.getElementById('admin-panel').style.display = 'none';
-        }
-
-        window.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key.toLowerCase() === 'm') {
-                e.preventDefault();
-                openAdmin();
-            }
+      try {
+        // Petición a tu API interna de Vercel
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: totalAmount })
         });
 
-        function verifyAdmin() {
-            const pass = document.getElementById('adminPass').value;
-            if (pass === "fastmoney2026") {
-                alert("Acceso concedido al panel admin.");
-                closeAdmin();
-            } else {
-                alert("Contraseña incorrecta.");
-            }
+        const data = await response.json();
+
+        if (data.error) {
+          alert('Error del servidor: ' + data.error);
+          payBtn.disabled = false;
+          payBtn.innerText = 'PAY NOW';
+          return;
         }
-    </script>
+
+        // Confirmar el pago usando la llave pública y el clientSecret que devolvió el backend
+        const result = await stripe.confirmCardPayment(data.clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: document.getElementById('custName').value || 'Cliente Grand Hustles'
+            }
+          }
+        });
+
+        if (result.error) {
+          document.getElementById('card-errors').textContent = result.error.message;
+          payBtn.disabled = false;
+          payBtn.innerText = 'PAY NOW';
+        } else {
+          if (result.paymentIntent.status === 'succeeded') {
+            alert('¡Pago completado con éxito! Gracias por tu compra.');
+            cart = [];
+            updateCartUI();
+            closeCheckout();
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Ocurrió un error al procesar el pago.');
+        payBtn.disabled = false;
+        payBtn.innerText = 'PAY NOW';
+      }
+    }
+
+    // --- ESCENA THREE.JS (FONDO 3D) ---
+    const canvas = document.getElementById('canvas3d');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const particlesGeometry = new THREE.BufferGeometry();
+    const count = 700;
+    const positions = new Float32Array(count * 3);
+
+    for(let i=0; i < count * 3; i++) {
+      positions[i] = (Math.random() - 0.5) * 15;
+    }
+
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particlesMaterial = new THREE.PointsMaterial({ size: 0.03, color: 0xffffff, transparent: true, opacity: 0.6 });
+    const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particleMesh);
+
+    camera.position.z = 5;
+
+    function animate() {
+      requestAnimationFrame(animate);
+      particleMesh.rotation.y += 0.001;
+      particleMesh.rotation.x += 0.0005;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // --- LÓGICA DE TIENDA Y CARRITO ---
+    let cart = [];
+
+    function checkAccess() {
+      const code = document.getElementById('accessInput').value.trim().toLowerCase();
+      if (code === 'alex') {
+        document.getElementById('accessModal').style.display = 'none';
+      } else {
+        alert('Código de acceso incorrecto.');
+      }
+    }
+
+    function toggleCart() {
+      document.getElementById('cartDrawer').classList.toggle('open');
+    }
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      updateCartUI();
+      toggleCart();
+    }
+
+    function updateCartUI() {
+      document.getElementById('cartCount').innerText = cart.length;
+      const cartItems = document.getElementById('cartItems');
+      const cartTotal = document.getElementById('cartTotal');
+      
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<p style="color:#666;">Your cart is empty.</p>';
+        cartTotal.innerText = '$0.00 USD';
+        return;
+      }
+
+      let html = '';
+      let total = 0;
+      cart.forEach((item) => {
+        total += item.price;
+        html += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #222; padding-bottom:5px;">
+          <span>${item.name}</span>
+          <span>$${item.price}.00</span>
+        </div>`;
+      });
+
+      cartItems.innerHTML = html;
+      cartTotal.innerText = `$${total}.00 USD`;
+    }
+
+    function openCheckout() {
+      if (cart.length === 0) {
+        alert('Tu carrito está vacío');
+        return;
+      }
+      toggleCart();
+      document.getElementById('checkoutModal').style.display = 'flex';
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').style.display = 'none';
+    }
+
+    function togglePaymentFields(method) {
+      document.getElementById('cardFields').style.display = (method === 'card') ? 'block' : 'none';
+      document.getElementById('zelleFields').style.display = (method === 'zelle') ? 'block' : 'none';
+    }
+
+    // ATAJO TECLADO ADMIN (Ctrl + Shift + A)
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+        document.getElementById('adminModal').style.display = 'flex';
+      }
+    });
+
+    function closeAdmin() {
+      document.getElementById('adminModal').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
