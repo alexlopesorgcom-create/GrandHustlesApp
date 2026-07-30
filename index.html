@@ -26,6 +26,10 @@
             align-items: center;
             padding: 20px 24px;
             border-bottom: 1px solid #1f1f1f;
+            position: sticky;
+            top: 0;
+            background-color: #0b0b0b;
+            z-index: 100;
         }
 
         .logo {
@@ -34,90 +38,206 @@
             font-size: 1.1rem;
         }
 
-        nav a {
-            color: #888;
-            text-decoration: none;
-            margin-left: 16px;
-            font-size: 0.9rem;
-            transition: color 0.2s;
+        .nav-links {
+            display: flex;
+            gap: 16px;
         }
 
-        nav a:hover, nav a.active {
+        .nav-links a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
             color: #fff;
+        }
+
+        .cart-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: #fff;
+            color: #000;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+            font-weight: 700;
         }
 
         main {
             flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .product-card {
+            background-color: #121212;
+            border: 1px solid #1f1f1f;
+            border-radius: 8px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 280px;
+            background-color: #1a1a1a;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 40px 20px;
+            color: #555;
+            font-size: 0.85rem;
         }
 
-        .badge {
-            background-color: #1f1f1f;
-            color: #ccc;
-            font-size: 0.75rem;
-            padding: 6px 14px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 24px;
+        .product-info h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            letter-spacing: -0.5px;
-        }
-
-        p {
-            color: #888;
+        .product-info p {
+            color: #aaa;
             font-size: 0.95rem;
-            max-width: 400px;
-            margin-bottom: 32px;
-            line-height: 1.5;
+            margin-bottom: 16px;
         }
 
-        .btn-container {
+        .btn-add {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn-add:hover {
+            background-color: #d1d1d1;
+        }
+
+        /* Modal del Carrito / Checkout */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: flex-end;
+            z-index: 1000;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: #141414;
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #222;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 16px;
+        }
+
+        .checkout-actions {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            width: 100%;
-            max-width: 320px;
+            margin-top: 20px;
         }
 
-        .btn {
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            text-decoration: none;
-            text-align: center;
-            transition: all 0.2s ease;
-        }
-
-        .btn-primary {
-            background-color: #f1f1f1;
-            color: #000;
-        }
-
-        .btn-primary:hover {
+        .btn-checkout {
             background-color: #fff;
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
         }
 
-        .btn-secondary {
-            background-color: transparent;
+        .express-pay {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-express {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
             color: #fff;
-            border: 1px solid #333;
         }
 
-        .btn-secondary:hover {
-            border-color: #666;
-        }
+        .apple-pay { background-color: #000; border: 1px solid #333; }
+        .google-pay { background-color: #000; border: 1px solid #333; }
 
         footer {
             padding: 24px;
@@ -132,27 +252,167 @@
 
     <header>
         <div class="logo">GRAND HUSTLES</div>
-        <nav>
-            <a href="#" class="active">Inicio</a>
-            <a href="#">Catálogo</a>
-            <a href="#">Contacto</a>
+        <nav class="nav-links">
+            <a onclick="showHome()" class="active" id="nav-home">Inicio</a>
+            <a onclick="showCatalog()" id="nav-catalog">Catálogo</a>
+            <a onclick="showContact()" id="nav-contact">Contacto</a>
         </nav>
+        <button class="cart-btn" onclick="toggleCart()">
+            🛒 <span class="cart-count" id="cartCount">0</span>
+        </button>
     </header>
 
-    <main>
-        <div class="badge">Official Store</div>
-        <h1>Elevate Your Style</h1>
-        <p>Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
-        
-        <div class="btn-container">
-            <a href="#" class="btn btn-primary">Ver Productos</a>
-            <a href="#" class="btn btn-secondary">Saber Más</a>
+    <main id="mainContent">
+        <!-- Vista de Inicio por defecto -->
+        <div style="text-align: center; padding: 60px 0;">
+            <div style="background-color: #1f1f1f; display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px;">OFFICIAL STORE</div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 16px;">Elevate Your Style</h1>
+            <p style="color: #888; max-width: 400px; margin: 0 auto 32px auto;">Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
+            <button onclick="showCatalog()" class="btn-add" style="max-width: 200px; margin: 0 auto;">Ver Productos</button>
         </div>
     </main>
+
+    <!-- Modal / Carrito de Compras -->
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-content">
+            <div>
+                <div class="modal-header">
+                    <h2>Shopping Cart</h2>
+                    <button class="close-modal" onclick="toggleCart()">✕</button>
+                </div>
+                <div id="cartItemsContainer">
+                    <p style="color: #666; text-align: center; margin-top: 40px;">Tu carrito está vacío</p>
+                </div>
+            </div>
+            
+            <div id="cartFooter" style="display: none;">
+                <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 16px; font-size: 1.1rem;">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">$0.00 USD</span>
+                </div>
+                
+                <div class="express-pay">
+                    <button class="btn-express apple-pay"> Pay</button>
+                    <button class="btn-express google-pay">G Pay</button>
+                </div>
+
+                <div class="checkout-actions">
+                    <button class="btn-checkout" onclick="alert('Redirigiendo al formulario de envío y pago seguro...')">Check Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer>
         &copy; 2026 Grand Hustles. Todos los derechos reservados.
     </footer>
 
+    <script>
+        // Base de datos de productos simulada
+        const products = [
+            { id: 1, name: "I'm a star blue T-shirt", price: 40.00, img: "Blue Tee" },
+            { id: 2, name: "All eyes on me t-shirt", price: 40.00, img: "Black Tee 1" },
+            { id: 3, name: "8W Web Baggy Jeans Black", price: 84.00, img: "Baggy Jeans" }
+        ];
+
+        let cart = [];
+
+        function showHome() {
+            setActiveNav('nav-home');
+            document.getElementById('mainContent').innerHTML = `
+                <div style="text-align: center; padding: 60px 0;">
+                    <div style="background-color: #1f1f1f; display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 20px;">OFFICIAL STORE</div>
+                    <h1 style="font-size: 2.5rem; margin-bottom: 16px;">Elevate Your Style</h1>
+                    <p style="color: #888; max-width: 400px; margin: 0 auto 32px auto;">Descubre la nueva colección exclusiva. Diseños únicos con la mejor calidad urbana.</p>
+                    <button onclick="showCatalog()" class="btn-add" style="max-width: 200px; margin: 0 auto;">Ver Productos</button>
+                </div>
+            `;
+        }
+
+        function showCatalog() {
+            setActiveNav('nav-catalog');
+            let html = `<h2 class="section-title">Catálogo</h2><div class="catalog-grid">`;
+            products.forEach(p => {
+                html += `
+                    <div class="product-card">
+                        <div>
+                            <div class="product-img">[ ${p.img} ]</div>
+                            <div class="product-info">
+                                <h3>${p.name}</h3>
+                                <p>$${p.price.toFixed(2)} USD</p>
+                            </div>
+                        </div>
+                        <button class="btn-add" onclick="addToCart(${p.id})">Add to Cart</button>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            document.getElementById('mainContent').innerHTML = html;
+        }
+
+        function showContact() {
+            setActiveNav('nav-contact');
+            document.getElementById('mainContent').innerHTML = `
+                <h2 class="section-title">Contacto</h2>
+                <p style="color: #888; margin-bottom: 20px;">¿Tienes dudas con tu pedido? Envíanos un mensaje.</p>
+                <input type="email" placeholder="Tu correo electrónico" style="width:100%; max-width:400px; padding:12px; background:#141414; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;">
+                <textarea placeholder="Comentario o mensaje" style="width:100%; max-width:400px; height:120px; padding:12px; background:#141414; border:1px solid #333; color:#fff; border-radius:6px; margin-bottom:12px; display:block;"></textarea>
+                <button class="btn-add" style="max-width: 150px;" onclick="alert('Mensaje enviado con éxito')">Send</button>
+            `;
+        }
+
+        function setActiveNav(id) {
+            document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function toggleCart() {
+            document.getElementById('cartModal').classList.toggle('open');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            updateCartUI();
+            toggleCart();
+        }
+
+        function updateCartUI() {
+            document.getElementById('cartCount').innerText = cart.length;
+            const container = document.getElementById('cartItemsContainer');
+            const footer = document.getElementById('cartFooter');
+
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="color: #666; text-align: center; margin-top: 40px;">Tu carrito está vacío</p>`;
+                footer.style.display = 'none';
+                return;
+            }
+
+            footer.style.display = 'block';
+            let html = '';
+            let subtotal = 0;
+
+            cart.forEach((item, index) => {
+                subtotal += item.price;
+                html += `
+                    <div class="cart-item">
+                        <div>
+                            <h4 style="font-size: 0.9rem; margin-bottom: 4px;">${item.name}</h4>
+                            <p style="color: #888; font-size: 0.85rem;">$${item.price.toFixed(2)} USD</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#888; cursor:pointer;">🗑️</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('cartSubtotal').innerText = `$${subtotal.toFixed(2)} USD`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+    </script>
 </body>
 </html>
