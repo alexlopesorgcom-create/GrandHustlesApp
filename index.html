@@ -19,7 +19,6 @@
             position: relative;
         }
 
-        /* Fondo dinámico estilo aurora / estrellas */
         .background-glow {
             position: fixed;
             top: 0;
@@ -54,7 +53,6 @@
             font-size: 1.2rem;
         }
 
-        /* Sección de productos con arrastre (Draggable) */
         .shop-container {
             padding: 40px 20px;
             max-width: 1200px;
@@ -72,13 +70,13 @@
             gap: 20px;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
-            scrollbar-width: none; /* Ocultar scroll en Firefox */
+            scrollbar-width: none;
             cursor: grab;
             padding-bottom: 20px;
         }
 
         .product-slider::-webkit-scrollbar {
-            display: none; /* Ocultar scroll en Chrome/Safari */
+            display: none;
         }
 
         .product-slider:active {
@@ -92,7 +90,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             padding: 15px;
-            transition: transform 0.3s ease;
         }
 
         .product-image-container {
@@ -101,7 +98,6 @@
             background: #111;
             border-radius: 8px;
             overflow: hidden;
-            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -111,8 +107,7 @@
             width: 90%;
             height: 90%;
             object-fit: contain;
-            pointer-events: none; /* Evita que la imagen interfiera con el drag */
-            transition: transform 0.2s ease;
+            pointer-events: none;
         }
 
         .product-info {
@@ -136,7 +131,6 @@
             margin-left: 8px;
         }
 
-        /* Panel Admin Oculto (Estilo Modal Secreto) */
         #admin-panel {
             display: none;
             position: fixed;
@@ -151,7 +145,7 @@
 
         .admin-content {
             max-width: 600px;
-            margin: 0 auto;
+            margin: 40px auto;
             background: #111;
             border: 1px solid #333;
             padding: 30px;
@@ -193,7 +187,6 @@
     <main class="shop-container">
         <h2 class="section-title">Featured products</h2>
         
-        <!-- Contenedor con capacidad de arrastre (Drag to Scroll) -->
         <div class="product-slider" id="slider">
             <div class="product-card">
                 <div class="product-image-container">
@@ -227,7 +220,6 @@
         </div>
     </main>
 
-    <!-- Panel Admin Oculto (Se activa con una combinación de teclas o comando secreto) -->
     <div id="admin-panel">
         <div class="admin-content">
             <h2>Panel de Administración Oculto</h2>
@@ -239,7 +231,6 @@
     </div>
 
     <script>
-        // Lógica de Arrastre Fluido (Drag to Scroll) para el slider
         const slider = document.getElementById('slider');
         let isDown = false;
         let startX;
@@ -247,28 +238,21 @@
 
         slider.addEventListener('mousedown', (e) => {
             isDown = true;
-            slider.classList.add('active');
             startX = e.pageX - slider.offsetLeft;
             scrollLeft = slider.scrollLeft;
         });
 
-        slider.addEventListener('mouseleave', () => {
-            isDown = false;
-        });
-
-        slider.addEventListener('mouseup', () => {
-            isDown = false;
-        });
+        slider.addEventListener('mouseleave', () => { isDown = false; });
+        slider.addEventListener('mouseup', () => { isDown = false; });
 
         slider.addEventListener('mousemove', (e) => {
             if (!isDown) return;
             e.preventDefault();
             const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 2; // Velocidad de arrastre
+            const walk = (x - startX) * 2;
             slider.scrollLeft = scrollLeft - walk;
         });
 
-        // Soporte táctil para celulares
         slider.addEventListener('touchstart', (e) => {
             startX = e.touches[0].pageX - slider.offsetLeft;
             scrollLeft = slider.scrollLeft;
@@ -280,13 +264,9 @@
             slider.scrollLeft = scrollLeft - walk;
         });
 
-        // Activador secreto del Panel Admin (Presionar la tecla 'Control' + 'M' tres veces o una combinación específica)
-        let secretKeySequence = [];
-        const targetSequence = ['Control', 'm'];
-
         window.addEventListener('keydown', (e) => {
-            secretKeySequence.push(e.key);
-            if (secretKeySequence.slice(-2).join('+') === 'Control+m' || (e.ctrlKey && e.key === 'm')) {
+            if (e.ctrlKey && e.key === 'm') {
+                e.preventDefault();
                 document.getElementById('admin-panel').style.display = 'block';
             }
         });
@@ -297,22 +277,15 @@
 
         function verifyAdmin() {
             const pass = document.getElementById('admin-pass').value;
-            // Aquí puedes configurar tu clave segura cifrada o validación backend
             if (pass === "tu_clave_secreta_2026") { 
-                alert("Acceso concedido. Cargando panel de control...");
-                // Redirigir o mostrar opciones de administración avanzadas
+                alert("Acceso concedido.");
             } else {
                 alert("Contraseña incorrecta.");
             }
         }
 
-        function toggleMenu() {
-            alert("Menú lateral desplegable activado.");
-        }
-
-        function toggleCart() {
-            alert("Carrito desplegado.");
-        }
+        function toggleMenu() { alert("Menú lateral."); }
+        function toggleCart() { alert("Carrito de compras."); }
     </script>
 </body>
 </html>
