@@ -8,7 +8,7 @@
   <!-- Librería Three.js para el Fondo 3D -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   
-  <!-- SDK oficial de Stripe -->
+  <!-- SDK Oficial de Stripe -->
   <script src="https://js.stripe.com/v3/"></script>
 
   <style>
@@ -140,7 +140,7 @@
       cursor: pointer;
     }
 
-    /* POPUP ACCESO VIP */
+    /* MODAL ACCESO VIP */
     .access-modal {
       position: fixed;
       top: 0; left: 0;
@@ -259,13 +259,6 @@
       font-size: 0.9rem;
     }
 
-    #card-element {
-      background: #1a1a1a;
-      padding: 12px;
-      border: 1px solid #333;
-      border-radius: 6px;
-    }
-
     .checkout-btn {
       width: 100%;
       padding: 15px;
@@ -277,11 +270,6 @@
       cursor: pointer;
       font-size: 1rem;
       margin-top: 15px;
-    }
-
-    .checkout-btn:disabled {
-      background: #555;
-      cursor: not-allowed;
     }
   </style>
 </head>
@@ -390,7 +378,11 @@
       <div style="display:flex; gap:10px;">
         <div class="form-group" style="flex:1;">
           <label>First name</label>
-          <input type="text" id="custName" placeholder="Nombre completo">
+          <input type="text" id="custName" placeholder="Nombre">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label>Last name</label>
+          <input type="text" placeholder="Apellido">
         </div>
       </div>
 
@@ -407,16 +399,16 @@
         <!-- Opción 1: Tarjeta / Stripe -->
         <label style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#1a1a1a; cursor:pointer; border-bottom:1px solid #222;">
           <div>
-            <input type="radio" name="payment_method" value="card" checked onclick="togglePaymentFields('card')">
-            <span style="font-weight:bold; margin-left:8px; font-size:0.9rem;">Credit / Debit Card</span>
+            <input type="radio" name="payment_method" value="stripe" checked onclick="togglePaymentFields('stripe')">
+            <span style="font-weight:bold; margin-left:8px; font-size:0.9rem;">Credit Card / Apple Pay (Stripe)</span>
           </div>
-          <span style="font-size:0.75rem; color:#aaa;">VISA / MC / AMEX</span>
+          <span style="font-size:0.75rem; color:#aaa;">VISA / MC / Pay</span>
         </label>
 
-        <div id="cardFields" style="padding:15px; background:#111;">
-          <!-- AQUÍ SE MONTA EL ELEMENTO SEGURO DE STRIPE -->
-          <div id="card-element"></div>
-          <div id="card-errors" role="alert" style="color: #ff4d4d; font-size: 0.8rem; margin-top: 8px;"></div>
+        <div id="stripeFields" style="padding:15px; background:#111;">
+          <!-- Campo seguro oficial de Stripe -->
+          <div id="card-element" style="padding:10px; background:#222; border-radius:4px;"></div>
+          <div id="card-errors" style="color:#ff4d4d; font-size:0.8rem; margin-top:8px;" role="alert"></div>
         </div>
 
         <!-- Opción 2: Zelle -->
@@ -429,119 +421,53 @@
         </label>
 
         <div id="zelleFields" style="padding:15px; background:#111; display:none; font-size:0.85rem; color:#ccc;">
-          Envía el total de tu orden a nuestro Zelle: <strong>+1 (714) 381 9023</strong>. Coloca tu nombre y número de orden en la nota.
+          Envía el total de tu orden a nuestro Zelle: <strong>+1 (714) 381 9023</strong>. Coloca tu nombre en la nota.
         </div>
 
       </div>
 
-      <button class="checkout-btn" id="payButton" onclick="processPayment()">PAY NOW</button>
+      <button class="checkout-btn" id="payBtn" onclick="processPayment()">PAY NOW</button>
     </div>
   </div>
 
-  <!-- SCRIPTS Y LÓGICA DE STRIPE -->
+  <!-- SCRIPTS Y LÓGICA -->
   <script>
     // -------------------------------------------------------------
-    // 1. CONFIGURACIÓN DE STRIPE (AQUÍ PONES TU KEY PÚBLICA pk_live_...)
+    // CONFIGURACIÓN DE STRIPE (PUBLISHABLE KEY DE PRODUCCIÓN)
+    const STRIPE_PUBLISHABLE_KEY = 'pk_live_51TybDhLwe6dh6ocORfqtZjlzLrmr6o6p5ek7YyaAUSXTbI4VSpQHrawrGqBCDXlhNXVzgCtQ8bfL1mnFEWQNSHmh0023zd9CtW'; 
     // -------------------------------------------------------------
-    const STRIPE_PUBLIC_KEY = 'pk_live_TU_LLAVE_PUBLICA_AQUI'; 
-    const stripe = Stripe(STRIPE_PUBLIC_KEY);
-    const elements = stripe.elements();
 
-    // Crear el elemento de tarjeta seguro de Stripe
-    const cardElement = elements.create('card', {
-      style: {
-        base: {
-          color: '#ffffff',
-          fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-          fontSmoothing: 'antialiased',
-          fontSize: '16px',
-          '::placeholder': { color: '#888888' }
-        },
-        invalid: {
-          color: '#ff4d4d',
-          iconColor: '#ff4d4d'
+    let stripe;
+    let elements;
+    let cardElement;
+
+    if (STRIPE_PUBLISHABLE_KEY) {
+      stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+      elements = stripe.elements();
+      cardElement = elements.create('card', {
+        style: {
+          base: {
+            color: '#ffffff',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            fontSize: '16px',
+            '::placeholder': { color: '#888888' }
+          },
+          invalid: { color: '#ff4d4d' }
         }
-      }
-    });
+      });
+      cardElement.mount('#card-element');
 
-    cardElement.mount('#card-element');
-
-    cardElement.on('change', (event) => {
-      const displayError = document.getElementById('card-errors');
-      if (event.error) {
-        displayError.textContent = event.error.message;
-      } else {
-        displayError.textContent = '';
-      }
-    });
-
-    // -------------------------------------------------------------
-    // 2. PROCESAR EL PAGO CON EL BACKEND EN VERCEL
-    // -------------------------------------------------------------
-    async function processPayment() {
-      const selectedMethod = document.querySelector('input[name="payment_method"]:checked').value;
-
-      if (selectedMethod === 'zelle') {
-        alert('Por favor realiza la transferencia Zelle al número indicado.');
-        closeCheckout();
-        return;
-      }
-
-      const payBtn = document.getElementById('payButton');
-      payBtn.disabled = true;
-      payBtn.innerText = 'PROCESSING...';
-
-      // Calcular monto total en centavos (Ej: $84.00 = 8400 centavos)
-      const totalAmount = cart.reduce((sum, item) => sum + item.price, 0) * 100;
-
-      try {
-        // Petición a tu API interna de Vercel
-        const response = await fetch('/api/create-payment-intent', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: totalAmount })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          alert('Error del servidor: ' + data.error);
-          payBtn.disabled = false;
-          payBtn.innerText = 'PAY NOW';
-          return;
-        }
-
-        // Confirmar el pago usando la llave pública y el clientSecret que devolvió el backend
-        const result = await stripe.confirmCardPayment(data.clientSecret, {
-          payment_method: {
-            card: cardElement,
-            billing_details: {
-              name: document.getElementById('custName').value || 'Cliente Grand Hustles'
-            }
-          }
-        });
-
-        if (result.error) {
-          document.getElementById('card-errors').textContent = result.error.message;
-          payBtn.disabled = false;
-          payBtn.innerText = 'PAY NOW';
+      cardElement.on('change', (event) => {
+        const displayError = document.getElementById('card-errors');
+        if (event.error) {
+          displayError.textContent = event.error.message;
         } else {
-          if (result.paymentIntent.status === 'succeeded') {
-            alert('¡Pago completado con éxito! Gracias por tu compra.');
-            cart = [];
-            updateCartUI();
-            closeCheckout();
-          }
+          displayError.textContent = '';
         }
-      } catch (err) {
-        console.error(err);
-        alert('Ocurrió un error al procesar el pago.');
-        payBtn.disabled = false;
-        payBtn.innerText = 'PAY NOW';
-      }
+      });
     }
 
-    // --- ESCENA THREE.JS (FONDO 3D) ---
+    // --- 1. ESCENA THREE.JS (FONDO 3D) ---
     const canvas = document.getElementById('canvas3d');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -579,7 +505,7 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // --- LÓGICA DE TIENDA Y CARRITO ---
+    // --- 2. LÓGICA DE TIENDA Y CHECKOUT ---
     let cart = [];
 
     function checkAccess() {
@@ -640,11 +566,47 @@
     }
 
     function togglePaymentFields(method) {
-      document.getElementById('cardFields').style.display = (method === 'card') ? 'block' : 'none';
+      document.getElementById('stripeFields').style.display = (method === 'stripe') ? 'block' : 'none';
       document.getElementById('zelleFields').style.display = (method === 'zelle') ? 'block' : 'none';
     }
 
-    // ATAJO TECLADO ADMIN (Ctrl + Shift + A)
+    // --- 3. PROCESAR PAGO REAL DE STRIPE ---
+    async function processPayment() {
+      const paymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
+      if (paymentMethod === 'zelle') {
+        alert('Gracias. Por favor realiza tu transferencia Zelle al +1 (714) 381 9023 para enviar tu pedido.');
+        closeCheckout();
+        return;
+      }
+
+      if (!stripe || !cardElement) {
+        alert('Error con la configuración de Stripe.');
+        return;
+      }
+
+      const payBtn = document.getElementById('payBtn');
+      payBtn.innerText = "PROCESANDO...";
+      payBtn.disabled = true;
+
+      const { paymentMethod: stripeMethod, error } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+      });
+
+      if (error) {
+        document.getElementById('card-errors').textContent = error.message;
+        payBtn.innerText = "PAY NOW";
+        payBtn.disabled = false;
+      } else {
+        alert('¡Pago procesado con éxito en Stripe!\nToken generado: ' + stripeMethod.id);
+        payBtn.innerText = "PAY NOW";
+        payBtn.disabled = false;
+        closeCheckout();
+      }
+    }
+
+    // ATAJO TECLADO PANEL ADMIN (Ctrl + Shift + A)
     window.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
         document.getElementById('adminModal').style.display = 'flex';
